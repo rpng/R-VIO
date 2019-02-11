@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Config file -->
+    <arg name="config" default="$(find rvio)/config/rvio_euroc.yaml" />
+
+    <!-- Our launch details -->
+    <node name="rvio" pkg="rvio" type="rvio_mono" args="$(arg config)" output="screen">
+    </node>
+
+</launch>

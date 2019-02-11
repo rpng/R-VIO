@@ -1,0 +1,51 @@
+# R-VIO
+
+R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a 6-axis IMU. Different from standard world-centric VINS algorithms which directly estimate absolute motion of the sensing platform with respect to a fixed, gravity-aligned global frame of reference {G}, R-VIO estimates the relative motion of high accuracy with respect to a moving local frame {R} (for example, IMU frame) and updates the global pose (orientation and position) estimate through composition. This algorithm is developed with the robocentric sliding-window filtering-based VIO framework that we originally proposed in our IROS 2018 paper and further extended in our recent *IJRR* submission:
+
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**,  *International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018.
+
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research*, Nov 2018. [cond. accepted]
+
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, arXiv:1805.04031, May 2018: https://arxiv.org/abs/1805.04031
+
+- For the implementation details, please also refer to our companion technical report: http://udel.edu/~ghuang/papers/tr_rvio_ijrr.pdf.
+
+## 1. Prerequisites
+
+We have tested the code under Ubuntu **16.04** and ROS **Kinetic**.
+
+### ROS
+Download and install instructions can be found at: http://wiki.ros.org/kinetic/Installation/Ubuntu.
+
+Additional ROS packages needed: tf, sensor_msgs, geometry_msgs, nav_msgs, cv_bridge, eigen_conversions.
+
+### Eigen
+Download and install instructions can be found at: http://eigen.tuxfamily.org. **Required at least 3.1.0**.
+
+### OpenCV
+Download and install instructions can be found at: http://opencv.org. **Required at leat 2.4.3**. **Tested with 2.4.11 and 3.3.1**.
+
+## 2. Build and Run
+First, `git clone` the repository and `catkin_make` it. Then, to run `rvio` with single camera/IMU inputs from the ROS topics `/camera/image_raw` and `/imu`, a config file in *config* folder and the corresponding launch file in *launch* folder (for example, `rvio_euroc.yaml` and `euroc.launch` are for EuRoC dataset) are needed, and to visualize the outputs of R-VIO please use `rviz` with the settings file `rvio_rviz.rviz` in *config* folder.
+  ```
+  Terminal 1: roscore
+  ```
+  ```
+  Terminal 2: rviz (AND OPEN rvio_rviz.rviz IN THE CONFIG FOLDER)
+  ```
+  ```
+  Terminal 3: roslaunch rvio euroc.launch
+  ```
+  ```
+  Terminal 4: rosbag play --pause V1_01_easy.bag /cam0/image_raw:=/camera/image_raw /imu0:=/imu
+  ```
+You can also run R-VIO with your own sensor (data) by creating a config file `rvio_NAME_OF_YOUR_DATA.yaml` in *config* folder and the corresponding launch file `NAME_OF_YOUR_DATA.launch` in *launch* folder referring to the above EuRoC example.
+
+## 3. License
+
+The source code is released under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+
+We are still working on improving the code reliability. For any technical issue, please contact Zheng Huai: <zhuai@udel.edu>.
+
+For commercial inquiries, please contact Guoquan (Paul) Huang: <ghuang@udel.edu>.
+
