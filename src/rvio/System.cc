@@ -219,7 +219,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
             double dt = (*lit)->TimeInterval;
 
             angle += dt*w;
-            displ += .5*pow(dt,2)*a;
+            displ += .5*pow(dt,2)*(a-mnGravity*a/a.norm());
         }
 
         // If the change is lager than the threshold
