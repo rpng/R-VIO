@@ -190,6 +190,29 @@ void Updater::update(Eigen::VectorXd& xk1k,
             Eigen::Vector3d HTRinve = Eigen::Vector3d::Zero();
             double cost = 0;
 
+            // The 1st measurement
+            Eigen::Vector3d h1 = epfinv;
+
+            Eigen::Matrix<double,2,3> Hproj1;
+            Hproj1 << 1/h1(2), 0, -h1(0)/pow(h1(2),2),
+                      0, 1/h1(2), -h1(1)/pow(h1(2),2);
+
+            Eigen::Matrix<double,2,3> H1;
+            H1 << Hproj1*Jang, Eigen::Vector2d::Zero();
+
+            cv::Point2f pt1;
+            pt1.x = h1(0)/h1(2);
+            pt1.y = h1(1)/h1(2);
+
+            Eigen::Vector2d e1;
+            e1 << (ptFirst-pt1).x, (ptFirst-pt1).y;
+
+            cost += e1.transpose()*Rinv*e1;
+
+            HTRinvH.noalias() += H1.transpose()*Rinv*H1;
+            HTRinve.noalias() += H1.transpose()*Rinv*e1;
+
+            // The following measurements
             std::list<cv::Point2f>::const_iterator lit = lFeatMeas.begin();
             for (int i=0; i<nTrackPhases; ++i, ++lit)
             {
