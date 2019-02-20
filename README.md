@@ -4,7 +4,7 @@ R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** alg
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research*, Nov 2018. [cond. accepted]
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**,  *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018.
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**,  *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [here](https://ieeexplore.ieee.org/document/8593643).
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, arXiv:1805.04031, May 2018: [here](https://arxiv.org/abs/1805.04031).
 
