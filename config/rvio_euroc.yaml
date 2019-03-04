@@ -81,7 +81,7 @@ Tracker.nMinDist: 20
 Tracker.nGridSize: 100
 
 # Max. tracking length
-Tracker.nTrackingLength: 10
+Tracker.nTrackingLength: 15
 
 # Use image equalizer or not
 Tracker.EnableEqualizer: 1
