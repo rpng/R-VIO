@@ -101,16 +101,19 @@ Tracker::Tracker(const std::string& strSettingsFile)
 
     mvlTrackingHistory.resize(mnMaxFeatsPerImage);
 
-    mLastImage = cv::Mat();
-
-    mbIsTheFirstImage = true;
-
-    mpCornerDetector = new CornerDetector(mnImageHeight, mnImageWidth);
-    mpCornerCluster = new CornerCluster(mnImageHeight, mnImageWidth);
+    double nQualLvl = fsSettings["Tracker.nQualLvl"];
+    double nMinDist = fsSettings["Tracker.nMinDist"];
+    double nGridSize = fsSettings["Tracker.nGridSize"];
+    mpCornerDetector = new CornerDetector(mnImageHeight, mnImageWidth, nQualLvl, nMinDist);
+    mpCornerCluster = new CornerCluster(mnImageHeight, mnImageWidth, nGridSize);
 
     int bUseSampson = fsSettings["Tracker.UseSampson"];
     double nInlierThreshold = fsSettings["Tracker.nSampsonThrd"];
     mpRansac = new Ransac(bUseSampson, nInlierThreshold);
+
+    mbIsTheFirstImage = true;
+
+    mLastImage = cv::Mat();
 
     mTrackPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/track", 2);
     mNewerPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/newer", 2);
@@ -209,7 +212,7 @@ void Tracker::DisplayTrack(const cv::Mat& imIn,
                            cv_bridge::CvImage& imOut)
 {
     imOut.header = std_msgs::Header();
-    imOut.encoding ="bgr8";
+    imOut.encoding = "bgr8";
 
     cvtColor(imIn, imOut.image, CV_GRAY2BGR);
 
@@ -234,7 +237,7 @@ void Tracker::DisplayNewer(const cv::Mat& imIn,
                            cv_bridge::CvImage& imOut)
 {
     imOut.header = std_msgs::Header();
-    imOut.encoding ="bgr8";
+    imOut.encoding = "bgr8";
 
     cvtColor(imIn, imOut.image, CV_GRAY2BGR);
 
@@ -418,7 +421,7 @@ void Tracker::track(cv::Mat& im,
 
             mpCornerCluster->ChessGrid(mvFeatsToTrack);
             mpCornerDetector->DetectWithSubPix(mnMaxFeatsPerImage, im, vTempFeats);
-            int nNewFeats = mpCornerCluster->FindNew(vTempFeats, vNewFeats);
+            int nNewFeats = mpCornerCluster->FindNew(vTempFeats, vNewFeats, 10);
 
             // Show the result in rviz
             cv_bridge::CvImage imNewer;

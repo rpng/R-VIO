@@ -71,8 +71,17 @@ Camera:nTimeOffset: 0
 # Number of features per image 
 Tracker.nFeatures: 200
 
+# Quality level of features
+Tracker.nQualLvl: 0.01
+
+# Min. distance between features
+Tracker.nMinDist: 20
+
+# Size of chess grid
+Tracker.nGridSize: 100
+
 # Max. tracking length
-Tracker.nTrackingLength: 15
+Tracker.nTrackingLength: 10
 
 # Use image equalizer or not
 Tracker.EnableEqualizer: 1
@@ -101,7 +110,7 @@ INI.nThresholdDispl: 0.005
 # Display Parameters (tunable).
 #--------------------------------------------------------------------------------------------
 
-# Point size
+# Size of point
 Landmark.nScale: 0.025
 
 # Publishing rate
