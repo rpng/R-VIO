@@ -36,12 +36,11 @@ CornerDetector::CornerDetector(const int nImageRows,
 
 int CornerDetector::DetectWithSubPix(const int nMaxCorners,
                                      const cv::Mat& im,
-                                     std::vector<cv::Point2f>& vCorners,
-                                     const double nMultiple)
+                                     std::vector<cv::Point2f>& vCorners)
 {
     vCorners.clear();
 
-    cv::goodFeaturesToTrack(im, vCorners, nMaxCorners, mnQualityLevel, nMultiple*mnMinDistance);
+    cv::goodFeaturesToTrack(im, vCorners, nMaxCorners, mnQualityLevel, mnMinDistance);
 
     if (vCorners.size()!=0)
     {

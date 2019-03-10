@@ -45,7 +45,7 @@ public:
      * @extract the maximum number of corners @p nMaxCorners,
      * @store the corners into @p vCorners for the visual tracking.
      */
-    int DetectWithSubPix(const int nMaxCorners, const cv::Mat& im, std::vector<cv::Point2f>& vCorners, const double nMultiple=1);
+    int DetectWithSubPix(const int nMaxCorners, const cv::Mat& im, std::vector<cv::Point2f>& vCorners);
 
 private:
 

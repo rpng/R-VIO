@@ -47,7 +47,7 @@ public:
 
     void MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq);
 
-    void PushImuData(ImuData* data);
+    void PushImuData(ImuData* data) { mpSensorDatabase->PushImuData(data); }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

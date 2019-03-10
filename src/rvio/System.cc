@@ -71,7 +71,7 @@ System::System(const std::string& strSettingsFile)
     const int nMaxTrackingLength = fsSettings["Tracker.nTrackingLength"];
     mnSlidingWindowSize = nMaxTrackingLength-1;
 
-    int bEnableAlignment = fsSettings["INI.EnableAlignment"];
+    const int bEnableAlignment = fsSettings["INI.EnableAlignment"];
     mbEnableAlignment = bEnableAlignment;
 
     mnInitTimeLength = fsSettings["INI.nTimeLength"];
@@ -100,12 +100,6 @@ System::~System()
     delete mpUpdater;
     delete mpPreIntegrator;
     delete mpSensorDatabase;
-}
-
-
-void System::PushImuData(ImuData* data)
-{
-    mpSensorDatabase->PushImuData(data);
 }
 
 

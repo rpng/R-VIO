@@ -1,14 +1,12 @@
 # R-VIO
 
-R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a 6-axis IMU. Different from standard world-centric VINS algorithms which directly estimate absolute motion of the sensing platform with respect to a fixed, gravity-aligned global frame of reference {G}, R-VIO estimates the relative motion of high accuracy with respect to a moving local frame {R} (for example, IMU frame) and updates the global pose (orientation and position) estimate through composition. This algorithm is developed with the robocentric sliding-window filtering-based VIO framework that we originally proposed in our IROS 2018 paper and further extended in our recent *IJRR* submission:
+R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a 6-axis IMU. Different from standard world-centric VINS algorithms which directly estimate absolute motion of the sensing platform with respect to a fixed, gravity-aligned global frame of reference {G}, R-VIO estimates the relative motion of high accuracy with respect to a moving local frame {R} (for example, IMU frame) and updates the global pose (orientation and position) estimate through composition. This algorithm is developed with the robocentric sliding-window filtering-based VIO framework that we originally proposed in our IROS2018 paper and further extended in our recent *IJRR* submission:
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research*, Nov 2018. [cond. accepted]
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, Nov 2018: [cond. accepted]
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**,  *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [here](https://ieeexplore.ieee.org/document/8593643).
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [here](https://ieeexplore.ieee.org/document/8593643).
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, arXiv:1805.04031, May 2018: [here](https://arxiv.org/abs/1805.04031).
-
-- For the implementation details, please also refer to our companion technical report: [here](http://udel.edu/~ghuang/papers/tr_rvio_ijrr.pdf).
 
 ## 1. Prerequisites
 

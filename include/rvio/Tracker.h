@@ -76,9 +76,6 @@ public:
 
 private:
 
-    int mnImageWidth;
-    int mnImageHeight;
-
     int mnMaxFeatsPerImage;
     int mnMaxTrackingLength;
     int mnMaxFeatsForUpdate;

@@ -46,8 +46,8 @@ Tracker::Tracker(const std::string& strSettingsFile)
     // Read settings file
     cv::FileStorage fsSettings(strSettingsFile, cv::FileStorage::READ);
 
-    mnImageWidth = fsSettings["Camera.width"];
-    mnImageHeight = fsSettings["Camera.height"];
+    const int nImageWidth = fsSettings["Camera.width"];
+    const int nImageHeight = fsSettings["Camera.height"];
 
     const float fx = fsSettings["Camera.fx"];
     const float fy = fsSettings["Camera.fy"];
@@ -83,33 +83,32 @@ Tracker::Tracker(const std::string& strSettingsFile)
     mRci = mRic.transpose();
     mtci = -mRci*mtic;
 
-    mnSmallAngle = fsSettings["IMU.nSmallAngle"];
-
-    int bIsRGB = fsSettings["Camera.RGB"];
+    const int bIsRGB = fsSettings["Camera.RGB"];
     mbIsRGB = bIsRGB;
 
-    int bIsFisheye = fsSettings["Camera.Fisheye"];
+    const int bIsFisheye = fsSettings["Camera.Fisheye"];
     mbIsFisheye = bIsFisheye;
 
-    int bEnableEqualizer = fsSettings["Tracker.EnableEqualizer"];
+    const int bEnableEqualizer = fsSettings["Tracker.EnableEqualizer"];
     mbEnableEqualizer = bEnableEqualizer;
 
     mnMaxFeatsPerImage = fsSettings["Tracker.nFeatures"];
-    mnMaxTrackingLength = fsSettings["Tracker.nTrackingLength"];
-
+    mvlTrackingHistory.resize(mnMaxFeatsPerImage);
     mnMaxFeatsForUpdate = std::ceil(0.5*mnMaxFeatsPerImage);
 
-    mvlTrackingHistory.resize(mnMaxFeatsPerImage);
+    mnMaxTrackingLength = fsSettings["Tracker.nTrackingLength"];
 
-    double nQualLvl = fsSettings["Tracker.nQualLvl"];
-    double nMinDist = fsSettings["Tracker.nMinDist"];
-    double nGridSize = fsSettings["Tracker.nGridSize"];
-    mpCornerDetector = new CornerDetector(mnImageHeight, mnImageWidth, nQualLvl, nMinDist);
-    mpCornerCluster = new CornerCluster(mnImageHeight, mnImageWidth, nGridSize);
+    const double nQualLvl = fsSettings["Tracker.nQualLvl"];
+    const double nMinDist = fsSettings["Tracker.nMinDist"];
+    const double nGridSize = fsSettings["Tracker.nGridSize"];
+    mpCornerDetector = new CornerDetector(nImageHeight, nImageWidth, nQualLvl, nMinDist);
+    mpCornerCluster = new CornerCluster(nImageHeight, nImageWidth, nGridSize);
 
-    int bUseSampson = fsSettings["Tracker.UseSampson"];
-    double nInlierThreshold = fsSettings["Tracker.nSampsonThrd"];
+    const int bUseSampson = fsSettings["Tracker.UseSampson"];
+    const double nInlierThreshold = fsSettings["Tracker.nSampsonThrd"];
     mpRansac = new Ransac(bUseSampson, nInlierThreshold);
+
+    mnSmallAngle = fsSettings["IMU.nSmallAngle"];
 
     mbIsTheFirstImage = true;
 
@@ -254,19 +253,19 @@ void Tracker::track(cv::Mat& im,
                     std::list<ImuData*>& plImuData)
 {
     // Convert to gray scale
-    if(im.channels()==3)
+    if (im.channels()==3)
     {
-        if(mbIsRGB)
+        if (mbIsRGB)
             cvtColor(im, im, CV_RGB2GRAY);
         else
             cvtColor(im, im, CV_BGR2GRAY);
     }
-    else if(im.channels()==4)
+    else if (im.channels()==4)
     {
-        if(mbIsRGB)
-           cvtColor(im, im, CV_RGBA2GRAY);
+        if (mbIsRGB)
+            cvtColor(im, im, CV_RGBA2GRAY);
         else
-           cvtColor(im, im, CV_BGRA2GRAY);
+            cvtColor(im, im, CV_BGRA2GRAY);
     }
 
     if (mbEnableEqualizer)
