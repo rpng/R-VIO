@@ -82,10 +82,12 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
     // State transition matrix
     Eigen::Matrix<double,24,24> F;
     Eigen::Matrix<double,24,24> Phi;
+    Eigen::Matrix<double,24,24> Psi;
     F.setZero();
     Phi.setZero();
+    Psi.setIdentity();
 
-    // Noise covariance matrix
+    // Noise matrix
     Eigen::Matrix<double,24,12> G;
     Eigen::Matrix<double,24,24> Q;
     G.setZero();
@@ -132,6 +134,7 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
         F.block<3,3>(15,18) = -vx;
         F.block<3,3>(15,21) = -I;
         Phi = Eigen::Matrix<double,24,24>::Identity()+dt*F;
+        Psi = Phi*Psi;
 
         G.block<3,3>(9,0) = -I;
         G.block<3,3>(15,0) = -vx;
@@ -141,15 +144,6 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
         Q = dt*G*Sigma*(G.transpose());
 
         Pkk.block(0,0,24,24) = Phi*(Pkk.block(0,0,24,24))*(Phi.transpose())+Q;
-
-        // For clone state covariance
-        int nCloneStates = (xkk.rows()-26)/7;
-        if (nCloneStates>0)
-        {
-            Pkk.block(0,24,24,6*nCloneStates) = Phi*Pkk.block(0,24,24,6*nCloneStates);
-            Pkk.block(24,0,6*nCloneStates,24) = Pkk.block(0,24,24,6*nCloneStates).transpose();
-        }
-        Pkk = .5*(Pkk+Pkk.transpose());
 
         // State
         Eigen::Matrix3d deltaR;
@@ -192,6 +186,13 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
     xk1k.block(14,0,3,1) = pk;
     xk1k.block(17,0,3,1) = vk;
 
+    int nCloneStates = (xkk.rows()-26)/7;
+    if (nCloneStates>0)
+    {
+        Pkk.block(0,24,24,6*nCloneStates) = Psi*Pkk.block(0,24,24,6*nCloneStates);
+        Pkk.block(24,0,6*nCloneStates,24) = Pkk.block(0,24,24,6*nCloneStates).transpose();
+    }
+    Pkk = .5*(Pkk+Pkk.transpose());
     Pk1k = Pkk;
 }
 

@@ -81,7 +81,7 @@ Tracker.EnableEqualizer: 1
 Tracker.nQualLvl: 0.01
 
 # Min. distance between features
-Tracker.nMinDist: 20
+Tracker.nMinDist: 15
 
 # Size of chess grid
 Tracker.nGridSize: 100

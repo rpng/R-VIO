@@ -180,7 +180,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
         Rinv << 1/pow(msigmaImageNoiseX,2), 0,
                 0, 1/pow(msigmaImageNoiseY,2);
 
-        int maxIter = 10;
+        int maxIter = 5;
         double lambda = 0.01;
         double lastCost = std::numeric_limits<double>::infinity();
 
