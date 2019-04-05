@@ -145,19 +145,19 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
 
             if (mbEnableAlignment)
             {
-                // i. align z-axis with g
+                // i. Align z-axis with g
                 Eigen::Vector3d zv = g;
 
-                // ii. make x-axis perpendicular to z-axis
+                // ii. Make x-axis perpendicular to z-axis
                 Eigen::Vector3d ex = Eigen::Vector3d(1,0,0);
                 Eigen::Vector3d xv = ex-zv*zv.transpose()*ex;
                 xv.normalize();
 
-                // iii. get y-axis
+                // iii. Get y-axis
                 Eigen::Vector3d yv = SkewSymm(zv)*xv;
                 yv.normalize();
 
-                // The orientation of {G} in {R0}
+                // iv. The orientation of {G} in {R0}
                 Rot << xv, yv, zv;
             }
             else
@@ -243,12 +243,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
      */
     if (nCloneStates==mnSlidingWindowSize)
     {
-        Eigen::VectorXd xk1k = mpPreIntegrator->xk1k;
-        Eigen::MatrixXd Pk1k = mpPreIntegrator->Pk1k;
-        std::vector<char> vFeatTypesForUpdate = mpTracker->mvFeatTypesForUpdate;
-        std::vector<std::list<cv::Point2f> > vlFeatMeasForUpdate = mpTracker->mvlFeatMeasForUpdate;
-
-        mpUpdater->update(xk1k, Pk1k, vFeatTypesForUpdate, vlFeatMeasForUpdate);
+        mpUpdater->update(mpPreIntegrator->xk1k, mpPreIntegrator->Pk1k, mpTracker->mvFeatTypesForUpdate, mpTracker->mvlFeatMeasForUpdate);
 
         xkk = mpUpdater->xk1k1;
         Pkk = mpUpdater->Pk1k1;
@@ -328,7 +323,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     gk = Rk*gk;
     gk.normalize();
 
-    // Pkk-->Pk
+    // Pk
     Eigen::Matrix<double,24,24> Vk;
     Vk.setZero();
     Vk.block(0,0,3,3) = Rk;
@@ -340,14 +335,12 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     Vk.block(6,9,3,3) = SkewSymm(gk);
     Vk.block(15,15,9,9).setIdentity();
 
-    Eigen::MatrixXd Uk(24+6*nCloneStates,24+6*nCloneStates);
-    Uk.setIdentity();
-    Uk.block(0,0,24,24) = Vk;
-
-    Pkk = Uk*Pkk*(Uk.transpose());
+    Pkk.block(0,0,24,24) = Vk*Pkk.block(0,0,24,24)*(Vk.transpose());
+    Pkk.block(0,24,24,6*nCloneStates) = Vk*Pkk.block(0,24,24,6*nCloneStates);
+    Pkk.block(24,0,6*nCloneStates,24) = Pkk.block(0,24,24,6*nCloneStates).transpose();
     Pkk = .5*(Pkk+Pkk.transpose());
 
-    // xkk-->xk
+    // xk
     xkk.block(0,0,4,1) = qkG;
     xkk.block(4,0,3,1) = pkG;
     xkk.block(7,0,3,1) = gk;

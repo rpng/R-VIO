@@ -94,11 +94,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
     // Number of (max) rows of matrices
     int nRows = 0;
     for (int i=0; i<nFeat; ++i)
-    {
-        // Can be used for triangulation
-        if ((int)pvlFeatMeasForUpdate.at(i).size()>2)
-            nRows += 2*(int)pvlFeatMeasForUpdate.at(i).size();
-    }
+        nRows += 2*(int)pvlFeatMeasForUpdate.at(i).size();
 
     // Number of clone states
     int nCloneStates = (xk1k.rows()-26)/7;
@@ -180,7 +176,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
         Rinv << 1/pow(msigmaImageNoiseX,2), 0,
                 0, 1/pow(msigmaImageNoiseY,2);
 
-        int maxIter = 5;
+        int maxIter = 10;
         double lambda = 0.01;
         double lastCost = std::numeric_limits<double>::infinity();
 
@@ -261,7 +257,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
 
                 lambda *= .1;
                 lastCost = cost;
-            } 
+            }
             else
             {
                 // Up
@@ -375,9 +371,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
             nStartRow += 2;
         }
 
-        if (nStartRow<tempHf.cols())
-            continue;
-
         // ii. Feature marginalization
         int M = nStartRow;
         int N = tempHf.cols();
@@ -415,7 +408,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
 
         // iii. Mahalanobis distance test
         // Note: this tests the dissimilarity between the measurement and the estimate,
-        //       d=r'*Sinv*r, where Sinv*r is the solution of Sx=r, and S=H*P*H'+R.
+        //       D=r'*Sinv*r, where Sinv*r is the solution of Sx=r, and S=H*P*H'+R.
         int nDOF = M-N;
         Eigen::VectorXd tempr_ = tempr.block(N,0,nDOF,1);
         Eigen::MatrixXd tempHx_ = tempHx.block(N,0,nDOF,tempHx.cols());

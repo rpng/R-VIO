@@ -111,7 +111,7 @@ INI.nThresholdDispl: 0.005
 #--------------------------------------------------------------------------------------------
 
 # Size of point
-Landmark.nScale: 0.025
+Landmark.nScale: 0.03
 
 # Publishing rate
 Landmark.nPubRate: 5

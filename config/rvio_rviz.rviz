@@ -24,7 +24,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Tracking [blue:inlier, red:outlier]
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -51,19 +51,13 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        imu:
-          Value: true
-        world:
-          Value: true
       Marker Scale: 2
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          imu:
-            {}
+        {}
       Update Interval: 0
       Value: true
     - Class: rviz/Image
@@ -107,7 +101,7 @@ Visualization Manager:
       Marker Topic: /rvio/landmarks
       Name: Features
       Namespaces:
-        points: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -200,5 +194,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1161
-  X: 65
+  X: 1985
   Y: 24
