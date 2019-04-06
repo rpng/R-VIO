@@ -60,6 +60,7 @@ private:
     double mnInitTimeLength;
 
     int mnSlidingWindowSize;
+    int mnMinCloneStates;
 
     bool mbEnableAlignment;
 

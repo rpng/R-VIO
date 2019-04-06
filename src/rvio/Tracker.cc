@@ -93,10 +93,12 @@ Tracker::Tracker(const std::string& strSettingsFile)
     mbEnableEqualizer = bEnableEqualizer;
 
     mnMaxFeatsPerImage = fsSettings["Tracker.nFeatures"];
-    mvlTrackingHistory.resize(mnMaxFeatsPerImage);
     mnMaxFeatsForUpdate = std::ceil(0.5*mnMaxFeatsPerImage);
 
-    mnMaxTrackingLength = fsSettings["Tracker.nTrackingLength"];
+    mvlTrackingHistory.resize(mnMaxFeatsPerImage);
+
+    mnMaxTrackingLength = fsSettings["Tracker.nMaxTrackingLength"];
+    mnMinTrackingLength = fsSettings["Tracker.nMinTrackingLength"];
 
     const double nQualLvl = fsSettings["Tracker.nQualLvl"];
     const double nMinDist = fsSettings["Tracker.nMinDist"];
@@ -363,7 +365,7 @@ void Tracker::track(cv::Mat& im,
                 int idx = mvInlierIndices.at(i);
                 mlFreeIndices.push_back(idx);
 
-                if ((int)mvlTrackingHistory.at(idx).size()>2)
+                if ((int)mvlTrackingHistory.at(idx).size()>=mnMinTrackingLength)
                 {
                     if (nMeasCount<mnMaxFeatsForUpdate)
                     {

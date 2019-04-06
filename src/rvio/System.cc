@@ -68,8 +68,11 @@ System::System(const std::string& strSettingsFile)
 
     mnCamTimeOffset = fsSettings["Camera.nTimeOffset"];
 
-    const int nMaxTrackingLength = fsSettings["Tracker.nTrackingLength"];
+    const int nMaxTrackingLength = fsSettings["Tracker.nMaxTrackingLength"];
     mnSlidingWindowSize = nMaxTrackingLength-1;
+
+    const int nMinTrackingLength = fsSettings["Tracker.nMinTrackingLength"];
+    mnMinCloneStates = nMinTrackingLength-1;
 
     const int bEnableAlignment = fsSettings["INI.EnableAlignment"];
     mbEnableAlignment = bEnableAlignment;
@@ -241,7 +244,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     /**
      * Update
      */
-    if (nCloneStates==mnSlidingWindowSize)
+    if (nCloneStates>mnMinCloneStates)
     {
         mpUpdater->update(mpPreIntegrator->xk1k, mpPreIntegrator->Pk1k, mpTracker->mvFeatTypesForUpdate, mpTracker->mvlFeatMeasForUpdate);
 

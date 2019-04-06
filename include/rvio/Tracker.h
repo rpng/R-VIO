@@ -77,8 +77,10 @@ public:
 private:
 
     int mnMaxFeatsPerImage;
-    int mnMaxTrackingLength;
     int mnMaxFeatsForUpdate;
+
+    int mnMaxTrackingLength;
+    int mnMinTrackingLength;
 
     int mnFeatsToTrack;
 

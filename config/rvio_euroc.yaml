@@ -72,7 +72,10 @@ Camera:nTimeOffset: 0
 Tracker.nFeatures: 200
 
 # Max. tracking length
-Tracker.nTrackingLength: 15
+Tracker.nMaxTrackingLength: 15
+
+# Min. tracking length
+Tracker.nMinTrackingLength: 3
 
 # Use image equalizer or not
 Tracker.EnableEqualizer: 1
