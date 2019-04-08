@@ -77,17 +77,17 @@ Tracker.nMaxTrackingLength: 15
 # Min. tracking length
 Tracker.nMinTrackingLength: 3
 
-# Use image equalizer or not
-Tracker.EnableEqualizer: 1
+# Min. distance between features
+Tracker.nMinDist: 15
 
 # Quality level of features
 Tracker.nQualLvl: 0.01
 
-# Min. distance between features
-Tracker.nMinDist: 15
-
 # Size of chess grid
 Tracker.nGridSize: 100
+
+# Use histogram equalizer or not
+Tracker.EnableEqualizer: 1
 
 # Use Sampson error or not (RANSAC)
 Tracker.UseSampson: 1
