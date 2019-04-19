@@ -124,13 +124,13 @@ private:
     Eigen::MatrixXd mPoints1ForRansac;
     Eigen::MatrixXd mPoints2ForRansac;
 
+    // Last image
+    cv::Mat mLastImage;
+
     // Handlers
     CornerDetector* mpCornerDetector;
     CornerCluster* mpCornerCluster;
     Ransac* mpRansac;
-
-    // Last image ptr
-    cv::Mat mLastImage;
 
     // Interact with rviz
     ros::NodeHandle mTrackerNode;

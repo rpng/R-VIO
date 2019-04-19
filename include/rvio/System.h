@@ -54,8 +54,6 @@ public:
 private:
 
     double mnImuRate;
-    double mnCamRate;
-
     double mnCamTimeOffset;
     double mnInitTimeLength;
 
@@ -73,30 +71,15 @@ private:
     // Gravity
     double mnGravity;
 
-    // Sigma{pixel}
-    double msigmaImageNoiseX;
-    double msigmaImageNoiseY;
-
-    // Sigma{g,a}
+    // Sigma{g,a,wg,wa}
     double msigmaGyroNoise;
     double msigmaAccelNoise;
-
-    // Sigma{wg,wa}
     double msigmaGyroBias;
     double msigmaAccelBias;
-
-    // Noise covariance matrix
-    Eigen::Matrix<double,12,12> Sigma;
 
     // State and covariance
     Eigen::VectorXd xkk;
     Eigen::MatrixXd Pkk;
-
-    // Extrinsics
-    Eigen::Matrix3d mRic;
-    Eigen::Vector3d mtic;
-    Eigen::Matrix3d mRci;
-    Eigen::Vector3d mtci;
 
     // Handlers
     Tracker* mpTracker;

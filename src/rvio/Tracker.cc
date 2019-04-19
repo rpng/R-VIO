@@ -83,6 +83,8 @@ Tracker::Tracker(const std::string& strSettingsFile)
     mRci = mRic.transpose();
     mtci = -mRci*mtic;
 
+    mnSmallAngle = fsSettings["IMU.nSmallAngle"];
+
     const int bIsRGB = fsSettings["Camera.RGB"];
     mbIsRGB = bIsRGB;
 
@@ -109,8 +111,6 @@ Tracker::Tracker(const std::string& strSettingsFile)
     const int bUseSampson = fsSettings["Tracker.UseSampson"];
     const double nInlierThreshold = fsSettings["Tracker.nSampsonThrd"];
     mpRansac = new Ransac(bUseSampson, nInlierThreshold);
-
-    mnSmallAngle = fsSettings["IMU.nSmallAngle"];
 
     mbIsTheFirstImage = true;
 
@@ -466,7 +466,7 @@ void Tracker::track(cv::Mat& im,
             }
         }
 
-        // Update information
+        // Update tracker
         mnFeatsToTrack = nInlierCount;
         mvInlierIndices = vInlierIndicesToTrack;
         mPoints1ForRansac = tempPointsForRansac.block(0,0,3,nInlierCount);

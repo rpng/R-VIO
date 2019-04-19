@@ -53,11 +53,9 @@ private:
     double mnGravity;
     double mnSmallAngle;
 
-    // Sigma{g,a}
+    // Sigma{g,a,wg,wa}
     double msigmaGyroNoise;
     double msigmaAccelNoise;
-
-    // Sigma{wg,wa}
     double msigmaGyroBias;
     double msigmaAccelBias;
 

@@ -57,19 +57,18 @@ int SensorDatabase::GetImuDataByTimeStamp(const double nTimeStamp,
                                           std::list<ImuData*>& plOutData)
 {
     std::unique_lock<std::mutex> lock(mMutexImu);
-    
-    plOutData.clear();
 
     if (mlImuFIFO.empty())
         return 0;
 
+    plOutData.clear();
+
     int nData = 0;
     while (!mlImuFIFO.empty())
     {
-        ImuData* pData = mlImuFIFO.front();
-        if (pData->Timestamp<nTimeStamp)
+        if (mlImuFIFO.front()->Timestamp<nTimeStamp)
         {
-            plOutData.push_back(pData);
+            plOutData.push_back(mlImuFIFO.front());
 
             mlImuFIFO.pop_front();
             nData++;

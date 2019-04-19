@@ -18,9 +18,9 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/thread.hpp>
-
 #include <Eigen/Core>
+
+#include <boost/thread.hpp>
 
 #include <opencv2/core/core.hpp>
 
@@ -54,7 +54,6 @@ System::System(const std::string& strSettingsFile)
     }
 
     mnImuRate = fsSettings["IMU.dps"];
-    mnCamRate = fsSettings["Camera.fps"];
 
     msigmaGyroNoise = fsSettings["IMU.sigma_g"];
     msigmaGyroBias = fsSettings["IMU.sigma_wg"];
@@ -62,9 +61,6 @@ System::System(const std::string& strSettingsFile)
     msigmaAccelBias = fsSettings["IMU.sigma_wa"];
 
     mnGravity = fsSettings["IMU.nG"];
-
-    msigmaImageNoiseX = fsSettings["Camera.sigma_px"];
-    msigmaImageNoiseY = fsSettings["Camera.sigma_py"];
 
     mnCamTimeOffset = fsSettings["Camera.nTimeOffset"];
 
