@@ -8,6 +8,10 @@ R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** alg
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, arXiv:1805.04031, May 2018: [here](https://arxiv.org/abs/1805.04031).
 
+Video (on EuRoC and handheld datasets) https://www.youtube.com/watch?v=UtiZ0EKa55M.
+
+Video (on our 9.8km urban driving dataset) https://www.youtube.com/watch?v=l9IC2ddBEYQ.
+
 ## 1. Prerequisites
 
 We have tested the code under Ubuntu **16.04** and ROS **Kinetic**.
