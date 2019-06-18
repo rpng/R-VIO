@@ -75,7 +75,7 @@ Tracker.nFeatures: 200
 Tracker.nMaxTrackingLength: 15
 
 # Min. tracking length
-Tracker.nMinTrackingLength: 3
+Tracker.nMinTrackingLength: 5
 
 # Min. distance between features
 Tracker.nMinDist: 15

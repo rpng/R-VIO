@@ -78,9 +78,6 @@ System::System(const std::string& strSettingsFile)
     mnThresholdAngle = fsSettings["INI.nThresholdAngle"];
     mnThresholdDispl = fsSettings["INI.nThresholdDispl"];
 
-    xkk.setZero(26,1);
-    Pkk.setZero(24,24);
-
     mbIsInitialized = false;
     mbIsMoving = false;
 

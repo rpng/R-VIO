@@ -49,7 +49,7 @@ public:
 
     ~Tracker();
 
-    void track(cv::Mat& im, Eigen::VectorXd& xkk, std::list<ImuData*>& plImuData);
+    void track(const cv::Mat& im, Eigen::VectorXd& xkk, std::list<ImuData*>& plImuData);
 
     void UndistortAndNormalize(const int N, std::vector<cv::Point2f>& src, std::vector<cv::Point2f>& dst);
 

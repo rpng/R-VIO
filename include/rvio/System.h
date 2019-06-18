@@ -93,6 +93,6 @@ private:
     tf::TransformBroadcaster mTfPub;
 };
 
-}// namespace RVIO
+} // namespace RVIO
 
 #endif

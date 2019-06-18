@@ -95,7 +95,7 @@ Tracker::Tracker(const std::string& strSettingsFile)
     mbEnableEqualizer = bEnableEqualizer;
 
     mnMaxFeatsPerImage = fsSettings["Tracker.nFeatures"];
-    mnMaxFeatsForUpdate = std::ceil(0.5*mnMaxFeatsPerImage);
+    mnMaxFeatsForUpdate = std::ceil(.5*mnMaxFeatsPerImage);
 
     mvlTrackingHistory.resize(mnMaxFeatsPerImage);
 
@@ -250,7 +250,7 @@ void Tracker::DisplayNewer(const cv::Mat& imIn,
 }
 
 
-void Tracker::track(cv::Mat& im,
+void Tracker::track(const cv::Mat& im,
                     Eigen::VectorXd& xkk,
                     std::list<ImuData*>& plImuData)
 {
@@ -377,7 +377,11 @@ void Tracker::track(cv::Mat& im,
 
                 mvlTrackingHistory.at(idx).clear();
             }
-            else
+        }
+
+        for (int i=0; i<mnFeatsToTrack; ++i)
+        {
+            if (vInlierFlag.at(i))
             {
                 // Tracked
                 int idx = mvInlierIndices.at(i);
