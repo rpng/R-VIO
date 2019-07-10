@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-
     <!-- Config file -->
     <arg name="config" default="$(find rvio)/config/rvio_euroc.yaml" />
 
@@ -8,4 +7,6 @@
     <node name="rvio" pkg="rvio" type="rvio_mono" args="$(arg config)" output="screen">
     </node>
 
+    <!-- Launch rviz -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find rvio)/config/rvio_rviz.rviz" />
 </launch>
