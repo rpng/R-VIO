@@ -164,7 +164,6 @@ void Tracker::UndistortAndNormalize(const int N,
 
 
 void Tracker::GetRotation(Eigen::Matrix3d& R,
-                          Eigen::VectorXd& xkk,
                           std::list<ImuData*>& plImuData)
 {
     Eigen::Matrix3d tempR;
@@ -173,23 +172,19 @@ void Tracker::GetRotation(Eigen::Matrix3d& R,
     Eigen::Matrix3d I;
     I.setIdentity();
 
-    Eigen::Vector3d bg = xkk.block(20,0,3,1);
-
     for (std::list<ImuData*>::const_iterator lit=plImuData.begin();
          lit!=plImuData.end(); ++lit)
     {
         Eigen::Vector3d wm = (*lit)->AngularVel;
         double dt = (*lit)->TimeInterval;
 
-        Eigen::Vector3d w = wm-bg;
-
         bool bIsSmallAngle = false;
-        if (w.norm()<mnSmallAngle)
+        if (wm.norm()<mnSmallAngle)
             bIsSmallAngle = true;
 
-        double w1 = w.norm();
+        double w1 = wm.norm();
         double wdt = w1*dt;
-        Eigen::Matrix3d wx = SkewSymm(w);
+        Eigen::Matrix3d wx = SkewSymm(wm);
         Eigen::Matrix3d wx2 = wx*wx;
 
         Eigen::Matrix3d deltaR;
@@ -251,7 +246,6 @@ void Tracker::DisplayNewer(const cv::Mat& imIn,
 
 
 void Tracker::track(const cv::Mat& im,
-                    Eigen::VectorXd& xkk,
                     std::list<ImuData*>& plImuData)
 {
     // Convert to gray scale
@@ -272,7 +266,7 @@ void Tracker::track(const cv::Mat& im,
 
     if (mbEnableEqualizer)
     {
-        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(15,15));
+        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(5,5));
         clahe->apply(im, im);
     }
 
@@ -337,8 +331,8 @@ void Tracker::track(const cv::Mat& im,
 
         // RANSAC
         Eigen::Matrix3d R;
-        GetRotation(R, xkk, plImuData);
-        mpRansac->FindInliers(mPoints1ForRansac, mPoints2ForRansac, R.transpose(), vInlierFlag);
+        GetRotation(R, plImuData);
+        mpRansac->FindInliers(mPoints1ForRansac, mPoints2ForRansac, R, vInlierFlag);
 
         // Show the result in rviz
         cv_bridge::CvImage imTrack;

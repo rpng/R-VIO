@@ -227,7 +227,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     /**
      * Visual tracking & Propagation
      */
-    boost::thread thdTracking(&Tracker::track, mpTracker, im, std::ref(xkk), std::ref(lImuDataSeq));
+    boost::thread thdTracking(&Tracker::track, mpTracker, std::ref(im), std::ref(lImuDataSeq));
     boost::thread thdPropagate(&PreIntegrator::propagate, mpPreIntegrator, std::ref(xkk), std::ref(Pkk), std::ref(lImuDataSeq));
 
     thdTracking.join();

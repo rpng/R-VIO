@@ -73,7 +73,7 @@ Updater::Updater(const std::string& strSettingsFile)
 
 void Updater::update(Eigen::VectorXd& xk1k,
                      Eigen::MatrixXd& Pk1k,
-                     std::vector<char>& pvFeatTypesForUpdate,
+                     std::vector<unsigned char>& pvFeatTypesForUpdate,
                      std::vector<std::list<cv::Point2f> >& pvlFeatMeasForUpdate)
 {
     // Interact with ROS rviz

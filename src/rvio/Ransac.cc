@@ -32,18 +32,38 @@ Ransac::Ransac(bool bUseSampson,
 
 
 void Ransac::SetPointSet(const int nInlierCandidates,
-                         const int nIterNum)
+                         const int nIterations)
 {
-    int idxA, idxB;
-    idxA = rand()%nInlierCandidates;
-    do
-    {
-        idxB = rand()%nInlierCandidates;
-    }
-    while (idxA==idxB);
+    std::vector<int> vIndices(nInlierCandidates);
+    for (int i=0; i<nInlierCandidates; ++i)
+        vIndices.at(i) = i;
 
-    mRansacModel.twoPoints(nIterNum,0) = mvInlierCandidateIndices.at(idxA);
-    mRansacModel.twoPoints(nIterNum,1) = mvInlierCandidateIndices.at(idxB);
+    int nIter = 0;
+    for (;;)
+    {
+        int idxA, idxB;
+        do
+        {
+            idxA = rand()%nInlierCandidates;
+        }
+        while (vIndices.at(idxA)==-1);
+
+        do
+        {
+            idxB = rand()%nInlierCandidates;
+        }
+        while (vIndices.at(idxB)==-1 || idxA==idxB);
+
+        mRansacModel.twoPoints(nIter,0) = mvInlierCandidateIndices.at(vIndices.at(idxA));
+        mRansacModel.twoPoints(nIter,1) = mvInlierCandidateIndices.at(vIndices.at(idxB));
+
+        vIndices.at(idxA) = -1;
+        vIndices.at(idxB) = -1;
+        nIter++;
+
+        if (nIter==nIterations)
+            break;
+    }
 }
 
 
@@ -54,23 +74,23 @@ void Ransac::SetRansacModel(const Eigen::MatrixXd& Points1,
 {
     // point(i)(j): feature i=(A,B) in reference frame j=(1,2)
     Eigen::Vector3d pointA1 = Points1.col(mRansacModel.twoPoints(nIterNum,0));
-    Eigen::Vector3d pointB1 = Points1.col(mRansacModel.twoPoints(nIterNum,1));
     Eigen::Vector3d pointA2 = Points2.col(mRansacModel.twoPoints(nIterNum,0));
+    Eigen::Vector3d pointB1 = Points1.col(mRansacModel.twoPoints(nIterNum,1));
     Eigen::Vector3d pointB2 = Points2.col(mRansacModel.twoPoints(nIterNum,1));
 
-    // p0= R01*p1
+    // p0= R*p1
     Eigen::Vector3d pointA0 = R*pointA1;
     Eigen::Vector3d pointB0 = R*pointB1;
 
-    // The solution of (p2^T)E(p0)=0, where
-    // Two parameters need to be determined: alpha, beta
-    // Two correspondences for solving it: {pA0,pA2} and {pB0,pB2}
-    double c1 =  pointA2(0)*pointA0(1)-pointA0(0)*pointA2(1);
-    double c2 =  pointA0(1)*pointA2(2)-pointA2(1)*pointA0(2);
-    double c3 =  pointA2(0)*pointA0(2)-pointA0(0)*pointA2(2);
-    double c4 =  pointB2(0)*pointB0(1)-pointB0(0)*pointB2(1);
-    double c5 =  pointB0(1)*pointB2(2)-pointB2(1)*pointB0(2);
-    double c6 =  pointB2(0)*pointB0(2)-pointB0(0)*pointB2(2);
+    // The solution of (p2^T)[tx]p0=0, where
+    // Two directional angles need to be solved: alpha, beta.
+    // Two correspondences for solving it: {A0,A2} and {B0,B2}.
+    double c1 = pointA2(0)*pointA0(1)-pointA0(0)*pointA2(1);
+    double c2 = pointA0(1)*pointA2(2)-pointA2(1)*pointA0(2);
+    double c3 = pointA2(0)*pointA0(2)-pointA0(0)*pointA2(2);
+    double c4 = pointB2(0)*pointB0(1)-pointB0(0)*pointB2(1);
+    double c5 = pointB0(1)*pointB2(2)-pointB2(1)*pointB0(2);
+    double c6 = pointB2(0)*pointB0(2)-pointB0(0)*pointB2(2);
 
     double alpha = atan2(c3*c5-c2*c6,c1*c6-c3*c4);
     double beta = atan2(-c3,c1*sin(alpha)+c2*cos(alpha));
@@ -114,26 +134,28 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
 
     mvInlierCandidateIndices.clear();
 
+    int nInlierCandidates = 0;
     for (int i=0; i<(int)vInlierFlag.size(); ++i)
     {
         if (vInlierFlag.at(i))
+        {
             // Store the index of inlier candidate
             mvInlierCandidateIndices.push_back(i);
+            nInlierCandidates++;
+        }
     }
 
-    int nInlierCandidates = mvInlierCandidateIndices.size();
-
-    if (nInlierCandidates<mRansacModel.nIterations)
-        // Too few candidates
+    if (nInlierCandidates>mRansacModel.nIterations)
+        SetPointSet(nInlierCandidates, mRansacModel.nIterations);
+    else
+        // Too few inliers
         return 0;
 
     int nWinnerInliersNumber = 0;
     int nWinnerHypothesisIdx = 0;
-
     for (int i=0; i<mRansacModel.nIterations; ++i)
     {
         // Do Ransac
-        SetPointSet(nInlierCandidates, i);
         SetRansacModel(Points1, Points2, R, i);
         CountInliers(Points1, Points2, i);
 

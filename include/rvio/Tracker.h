@@ -49,11 +49,11 @@ public:
 
     ~Tracker();
 
-    void track(const cv::Mat& im, Eigen::VectorXd& xkk, std::list<ImuData*>& plImuData);
+    void track(const cv::Mat& im, std::list<ImuData*>& plImuData);
 
     void UndistortAndNormalize(const int N, std::vector<cv::Point2f>& src, std::vector<cv::Point2f>& dst);
 
-    void GetRotation(Eigen::Matrix3d& R, Eigen::VectorXd& xkk, std::list<ImuData*>& plImuData);
+    void GetRotation(Eigen::Matrix3d& R, std::list<ImuData*>& plImuData);
 
     void DisplayTrack(const cv::Mat& imIn, std::vector<cv::Point2f>& vPoints1, std::vector<cv::Point2f>& vPoints2,
                       std::vector<unsigned char>& vInlierFlag, cv_bridge::CvImage& imOut);
@@ -68,7 +68,7 @@ public:
     // Feature types for update
     // '1': lose track
     // '2': reach the max. tracking length
-    std::vector<char> mvFeatTypesForUpdate;
+    std::vector<unsigned char> mvFeatTypesForUpdate;
 
     // Feature measurements for update
     // Each list corresponds to a feature with its size the tracking length.

@@ -1,7 +1,7 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# IMU Parameters.
+# IMU Parameters (fixed).
 #--------------------------------------------------------------------------------------------
 
 # IMU data rate
@@ -20,7 +20,7 @@ IMU.sigma_wa: 3.0000e-3
 IMU.nG: 9.8082
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters.
+# Camera Parameters (fixed).
 #--------------------------------------------------------------------------------------------
 
 # Camera frame rate
@@ -78,7 +78,7 @@ Tracker.nMaxTrackingLength: 15
 Tracker.nMinTrackingLength: 5
 
 # Min. distance between features
-Tracker.nMinDist: 15
+Tracker.nMinDist: 10
 
 # Quality level of features
 Tracker.nQualLvl: 0.01
@@ -93,7 +93,7 @@ Tracker.EnableEqualizer: 1
 Tracker.UseSampson: 1
 
 # Threshold for inlier (RANSAC)
-Tracker.nSampsonThrd: 1e-4
+Tracker.nSampsonThrd: 5e-4
 
 #--------------------------------------------------------------------------------------------
 # Initialization Parameters (tunable).

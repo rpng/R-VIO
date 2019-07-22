@@ -41,7 +41,7 @@ public:
 
     Updater(const std::string& strSettingsFile);
 
-    void update(Eigen::VectorXd& xk1k, Eigen::MatrixXd& Pk1k, std::vector<char>& pvFeatTypesForUpdate,
+    void update(Eigen::VectorXd& xk1k, Eigen::MatrixXd& Pk1k, std::vector<unsigned char>& pvFeatTypesForUpdate,
                 std::vector<std::list<cv::Point2f> >& pvlFeatMeasForUpdate);
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
