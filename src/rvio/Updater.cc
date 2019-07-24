@@ -153,7 +153,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
         double psi = atan2(ptFirst.x,1);
         double rho = 0.;
 
-        if (abs(phi)>.5*3.14 || abs(psi)>.5*3.14)
+        if (fabs(phi)>.5*3.14 || fabs(psi)>.5*3.14)
         {
             ROS_DEBUG("Invalid inverse-depth feature estimate (0)!");
             continue;
@@ -252,7 +252,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
                          cos(phi), 0,
                         -sin(phi)*cos(psi), -cos(phi)*sin(psi);
 
-                if (abs(lastCost-cost)<1e-6 || dpfinv.norm()<1e-6)
+                if (fabs(lastCost-cost)<1e-6 || dpfinv.norm()<1e-6)
                     break;
 
                 lambda *= .1;
@@ -266,7 +266,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
             }
         }
 
-        if (std::isinf(rho) || rho<=0 || abs(phi)>.5*3.14 || abs(psi)>.5*3.14)
+        if (fabs(phi)>.5*3.14 || fabs(psi)>.5*3.14 || std::isinf(rho) || rho<0)
         {
             ROS_DEBUG("Invalid inverse-depth feature estimate (1)!");
             continue;

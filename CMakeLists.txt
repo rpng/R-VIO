@@ -35,12 +35,12 @@ LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules/)
 # Find catkin (the ROS build system)
 # Add this for finding ros dependencies
 find_package(catkin REQUIRED COMPONENTS
-  roscpp tf sensor_msgs geometry_msgs nav_msgs cv_bridge eigen_conversions
+  roscpp roslib tf sensor_msgs geometry_msgs nav_msgs cv_bridge eigen_conversions
 )
 
 # Describe catkin project
 catkin_package(CATKIN_DEPENDS
-    roscpp tf std_msgs sensor_msgs geometry_msgs nav_msgs cv_bridge eigen_conversions
+    roscpp roslib tf std_msgs sensor_msgs geometry_msgs nav_msgs cv_bridge eigen_conversions
     INCLUDE_DIRS src
     LIBRARIES ${PROJECT_NAME}
 )

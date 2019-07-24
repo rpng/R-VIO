@@ -61,6 +61,7 @@ private:
     int mnMinCloneStates;
 
     bool mbEnableAlignment;
+    bool mbRecordOutputs;
 
     bool mbIsInitialized;
     bool mbIsMoving;

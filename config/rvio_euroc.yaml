@@ -109,6 +109,9 @@ INI.nTimeLength: 1
 INI.nThresholdAngle: 0.005
 INI.nThresholdDispl: 0.005
 
+# Record the outputs or not
+INI.RecordOutputs: 0
+
 #--------------------------------------------------------------------------------------------
 # Display Parameters (tunable).
 #--------------------------------------------------------------------------------------------

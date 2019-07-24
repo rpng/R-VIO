@@ -13,6 +13,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>roscpp</depend>
+  <depend>roslib</depend>
   <depend>tf</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
