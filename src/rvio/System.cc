@@ -318,15 +318,15 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     Eigen::Vector4d qk = xkk.block(10,0,4,1);
     Eigen::Vector3d pk = xkk.block(14,0,3,1);
 
-    Eigen::Matrix3d RG_T = QuatToRot(qG).transpose();
+    Eigen::Matrix3d RG = QuatToRot(qG);
     Eigen::Matrix3d Rk = QuatToRot(qk);
-
-    Eigen::Vector4d qkG = QuatMul(qk,qG);
-    Eigen::Vector3d pkG = Rk*(pG-pk);
-    Eigen::Vector3d pGk = RG_T*(pk-pG);
 
     gk = Rk*gk;
     gk.normalize();
+
+    Eigen::Vector4d qkG = QuatMul(qk,qG);
+    Eigen::Vector3d pkG = Rk*(pG-pk);
+    Eigen::Vector3d pGk = RG.transpose()*(pk-pG);
 
     if (mbRecordOutputs)
     {

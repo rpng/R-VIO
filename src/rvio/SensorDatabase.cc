@@ -66,7 +66,7 @@ int SensorDatabase::GetImuDataByTimeStamp(const double nTimeStamp,
     int nData = 0;
     while (!mlImuFIFO.empty())
     {
-        if (mlImuFIFO.front()->Timestamp<nTimeStamp)
+        if (mlImuFIFO.front()->Timestamp<=nTimeStamp)
         {
             plOutData.push_back(mlImuFIFO.front());
 

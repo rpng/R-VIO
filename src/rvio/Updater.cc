@@ -555,7 +555,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
         dqG(2) = .5*dx(2);
 
         double dqGvn = (dqG.head(3)).norm();
-
         if (dqGvn<1)
         {
             dqG(3) = sqrt(1-pow(dqGvn,2));
@@ -580,7 +579,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
         dqR(2) = .5*dx(11);
 
         double dqRvn = (dqR.head(3)).norm();
-
         if (dqRvn<1)
         {
             dqR(3) = sqrt(1-pow(dqRvn,2));
@@ -603,7 +601,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
             dqc(2) = .5*dx(24+6*poseIdx+2);
 
             double dqcvn = (dqc.head(3)).norm();
-
             if (dqcvn<1)
             {
                 dqc(3) = sqrt(1-pow(dqcvn,2));
