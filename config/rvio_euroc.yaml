@@ -62,7 +62,7 @@ Camera.T_BC0: !!opencv-matrix
             0.0, 0.0, 0.0, 1.0]
 
 # Timeshift of camera to IMU [s] (t_imu=t_cam+shift)
-Camera:nTimeOffset: 0
+Camera.nTimeOffset: 0
 
 #--------------------------------------------------------------------------------------------
 # Tracker Parameters (tunable).
