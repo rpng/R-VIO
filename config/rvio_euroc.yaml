@@ -72,7 +72,7 @@ Camera.nTimeOffset: 0
 Tracker.nFeatures: 200
 
 # Max. tracking length
-Tracker.nMaxTrackingLength: 15
+Tracker.nMaxTrackingLength: 15 # 10 # 5
 
 # Min. tracking length
 Tracker.nMinTrackingLength: 3
@@ -93,7 +93,7 @@ Tracker.EnableEqualizer: 1
 Tracker.UseSampson: 1
 
 # Threshold for inlier (RANSAC)
-Tracker.nSampsonThrd: 5e-4
+Tracker.nSampsonThrd: 1e-4
 
 #--------------------------------------------------------------------------------------------
 # Initialization Parameters (tunable).

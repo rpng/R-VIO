@@ -94,10 +94,10 @@ void Ransac::SetRansacModel(const Eigen::MatrixXd& Points1,
 
     double alpha = atan2(c3*c5-c2*c6,c1*c6-c3*c4);
     double beta = atan2(-c3,c1*sin(alpha)+c2*cos(alpha));
+    Eigen::Vector3d t = Eigen::Vector3d(sin(beta)*cos(alpha),cos(beta),-sin(beta)*sin(alpha));
 
     // Add result to the RANSAC model
-    Eigen::Vector3d t = Eigen::Vector3d(sin(beta)*cos(alpha),cos(beta),-sin(beta)*sin(alpha));
-    mRansacModel.hypotheses.block<3,3>(3*nIterNum,0) = SkewSymm(t);
+    mRansacModel.hypotheses.block<3,3>(3*nIterNum,0) = SkewSymm(t)*R;
 }
 
 
