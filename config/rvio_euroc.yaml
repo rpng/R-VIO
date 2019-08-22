@@ -92,22 +92,19 @@ Tracker.EnableEqualizer: 1
 # Use Sampson error or not (RANSAC)
 Tracker.UseSampson: 1
 
-# Threshold for inlier (RANSAC)
-Tracker.nSampsonThrd: 1e-4
+# Error threshold for inlier (RANSAC)
+Tracker.nInlierThrd: 1e-4
 
 #--------------------------------------------------------------------------------------------
 # Initialization Parameters (tunable).
 #--------------------------------------------------------------------------------------------
 
-# Use initial alignment or not
-INI.EnableAlignment: 1
-
-# Time length of initialization [s]
-INI.nTimeLength: 1
-
 # Thresholds for moving detection [rad,m]
 INI.nThresholdAngle: 0.005
 INI.nThresholdDispl: 0.01
+
+# Use gravity alignment or not
+INI.EnableAlignment: 1
 
 # Record the outputs or not
 INI.RecordOutputs: 0

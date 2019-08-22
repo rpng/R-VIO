@@ -109,15 +109,15 @@ Tracker::Tracker(const std::string& strSettingsFile)
     mpCornerCluster = new CornerCluster(nImageHeight, nImageWidth, nGridSize);
 
     const int bUseSampson = fsSettings["Tracker.UseSampson"];
-    const double nInlierThreshold = fsSettings["Tracker.nSampsonThrd"];
+    const double nInlierThreshold = fsSettings["Tracker.nInlierThrd"];
     mpRansac = new Ransac(bUseSampson, nInlierThreshold);
 
     mbIsTheFirstImage = true;
 
     mLastImage = cv::Mat();
 
-    mTrackPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/track", 2);
-    mNewerPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/newer", 2);
+    mTrackPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/track", 1);
+    mNewerPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/newer", 1);
 }
 
 

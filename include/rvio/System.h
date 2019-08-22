@@ -45,7 +45,7 @@ public:
 
     ~System();
 
-    void MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq);
+    void MonoVIO(const cv::Mat& im, const double& timestamp);
 
     void PushImuData(ImuData* data) { mpSensorDatabase->PushImuData(data); }
 
@@ -55,7 +55,6 @@ private:
 
     double mnImuRate;
     double mnCamTimeOffset;
-    double mnInitTimeLength;
 
     int mnSlidingWindowSize;
     int mnMinCloneStates;
@@ -63,7 +62,7 @@ private:
     bool mbEnableAlignment;
     bool mbRecordOutputs;
 
-    bool mbIsInitialized;
+    bool mbIsReady;
     bool mbIsMoving;
 
     double mnThresholdAngle;

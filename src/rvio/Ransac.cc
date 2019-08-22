@@ -200,8 +200,7 @@ double Ransac::SampsonError(const Eigen::Vector3d& pt1,
     Eigen::Vector3d Fx1 = E*pt1;
     Eigen::Vector3d Fx2 = E.transpose()*pt2;
 
-    return (pow(pt2.transpose()*E*pt1,2))/
-           (pow(Fx1(0),2)+pow(Fx1(1),2)+pow(Fx2(0),2)+pow(Fx2(1),2));
+    return (pow(pt2.transpose()*E*pt1,2))/(pow(Fx1(0),2)+pow(Fx1(1),2)+pow(Fx2(0),2)+pow(Fx2(1),2));
 }
 
 

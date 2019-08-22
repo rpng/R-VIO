@@ -55,7 +55,7 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
 {
     static int lastseq = -1;
     if ((int)msg->header.seq!=lastseq+1 && lastseq!=-1)
-        ROS_ERROR("Image message drop! curr seq: %d expected seq: %d.", msg->header.seq, lastseq+1);
+        ROS_DEBUG("Image message drop! curr seq: %d expected seq: %d.", msg->header.seq, lastseq+1);
     lastseq = msg->header.seq;
 
     cv_bridge::CvImageConstPtr cv_ptr;
@@ -69,7 +69,7 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         return;
     }
 
-    mpSys->MonoVIO(cv_ptr->image, cv_ptr->header.stamp.toSec(), msg->header.seq);
+    mpSys->MonoVIO(cv_ptr->image, cv_ptr->header.stamp.toSec());
 }
 
 
@@ -77,7 +77,7 @@ void ImuGrabber::GrabImu(const sensor_msgs::ImuConstPtr& msg)
 {
     static int lastseq = -1;
     if ((int) msg->header.seq!=lastseq+1 && lastseq!=-1)
-        ROS_ERROR("IMU message drop! curr seq: %d expected seq: %d.", msg->header.seq, lastseq+1);
+        ROS_DEBUG("IMU message drop! curr seq: %d expected seq: %d.", msg->header.seq, lastseq+1);
     lastseq = msg->header.seq;
 
     Eigen::Vector3d angular_velocity;

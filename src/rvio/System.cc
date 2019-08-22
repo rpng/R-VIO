@@ -82,13 +82,11 @@ System::System(const std::string& strSettingsFile)
     const int bRecordOutputs = fsSettings["INI.RecordOutputs"];
     mbRecordOutputs = bRecordOutputs;
 
-    mnInitTimeLength = fsSettings["INI.nTimeLength"];
-
     mnThresholdAngle = fsSettings["INI.nThresholdAngle"];
     mnThresholdDispl = fsSettings["INI.nThresholdDispl"];
 
-    mbIsInitialized = false;
     mbIsMoving = false;
+    mbIsReady = false;
 
     mpTracker = new Tracker(strSettingsFile);
     mpUpdater = new Updater(strSettingsFile);
@@ -108,100 +106,19 @@ System::~System()
 }
 
 
-void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
+void System::MonoVIO(const cv::Mat& im, const double& timestamp)
 {
     static int nCloneStates = 0;
-    static int nImuDataCount = 0;
-    static int nImageCountAfterMoving = 0;
+    static int nImageCountAfterInit = 0;
 
     std::list<ImuData*> lImuDataSeq;
     int nImuData = mpSensorDatabase->GetImuDataByTimeStamp(timestamp+mnCamTimeOffset, lImuDataSeq);
     if (nImuData==0)
         return;
 
-    nImuDataCount += nImuData;
-
-
-    /*
-     * Initialization
-     */
-    if (!mbIsInitialized)
-    {
-        static Eigen::Vector3d wm = Eigen::Vector3d::Zero();
-        static Eigen::Vector3d am = Eigen::Vector3d::Zero();
-
-        while (!lImuDataSeq.empty())
-        {
-            wm += (lImuDataSeq.front())->AngularVel;
-            am += (lImuDataSeq.front())->LinearAccel;
-            lImuDataSeq.pop_front();
-        }
-
-        if (nImuDataCount>mnInitTimeLength*mnImuRate)
-        {
-            wm = wm/nImuDataCount;
-            am = am/nImuDataCount;
-
-            Eigen::Vector3d g = am;
-            g.normalize();
-            Eigen::Vector3d gI = mnGravity*g;
-
-            Eigen::Matrix3d Rot;
-
-            if (mbEnableAlignment)
-            {
-                // i. Align z-axis with g
-                Eigen::Vector3d zv = g;
-
-                // ii. Make x-axis perpendicular to z-axis
-                Eigen::Vector3d ex = Eigen::Vector3d(1,0,0);
-                Eigen::Vector3d xv = ex-zv*zv.transpose()*ex;
-                xv.normalize();
-
-                // iii. Get y-axis
-                Eigen::Vector3d yv = SkewSymm(zv)*xv;
-                yv.normalize();
-
-                // iv. The orientation of {G} in {R0}
-                Rot << xv, yv, zv;
-            }
-            else
-                Rot.setIdentity();
-
-            xkk.setZero(26,1);
-            xkk.block(0,0,4,1) = RotToQuat(Rot);
-            xkk.block(7,0,3,1) = g;
-            xkk.block(20,0,3,1) = wm; // bg
-            xkk.block(23,0,3,1) = am-gI; // ba
-
-            double dt = 1/mnImuRate;
-
-            Pkk.setZero(24,24);
-            Pkk(0,0) = pow(1e-3,2); // qG
-            Pkk(1,1) = pow(1e-3,2);
-            Pkk(2,2) = pow(1e-3,2);
-            Pkk(3,3) = pow(1e-3,2); // pG
-            Pkk(4,4) = pow(1e-3,2);
-            Pkk(5,5) = pow(1e-3,2);
-            Pkk(6,6) = nImuDataCount*dt*pow(msigmaAccelNoise,2); // g
-            Pkk(7,7) = nImuDataCount*dt*pow(msigmaAccelNoise,2);
-            Pkk(8,8) = nImuDataCount*dt*pow(msigmaAccelNoise,2);
-            Pkk(18,18) = nImuDataCount*dt*pow(msigmaGyroBias,2); // bg
-            Pkk(19,19) = nImuDataCount*dt*pow(msigmaGyroBias,2);
-            Pkk(20,20) = nImuDataCount*dt*pow(msigmaGyroBias,2);
-            Pkk(21,21) = nImuDataCount*dt*pow(msigmaAccelBias,2); // ba
-            Pkk(22,22) = nImuDataCount*dt*pow(msigmaAccelBias,2);
-            Pkk(23,23) = nImuDataCount*dt*pow(msigmaAccelBias,2);
-
-            mbIsInitialized = true;
-        }
-
-        if (!mbIsInitialized) return;
-    }
-
 
     /**
-     * Static/Moving detection
+     * Moving detection
      */
     if (!mbIsMoving)
     {
@@ -223,14 +140,109 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
 
         // If the change is lager than the threshold
         if (angle.norm()>mnThresholdAngle || displ.norm()>mnThresholdDispl)
-            // Is moving
             mbIsMoving = true;
+    }
+
+
+    /*
+     * Initialization
+     */
+    if (!mbIsReady)
+    {
+        static Eigen::Vector3d wm = Eigen::Vector3d::Zero();
+        static Eigen::Vector3d am = Eigen::Vector3d::Zero();
+        static int nImuDataCount = 0;
+
+        while (!lImuDataSeq.empty())
+        {
+            if (!mbIsMoving)
+            {
+                wm += (lImuDataSeq.front())->AngularVel;
+                am += (lImuDataSeq.front())->LinearAccel;
+
+                lImuDataSeq.pop_front();
+                nImuDataCount++;
+            }
+            else
+            {
+                if (nImuDataCount==0)
+                {
+                    wm = (lImuDataSeq.front())->AngularVel;
+                    am = (lImuDataSeq.front())->LinearAccel;
+
+                    nImuDataCount = 1;
+                }
+                else
+                {
+                    wm = wm/nImuDataCount;
+                    am = am/nImuDataCount;
+                }
+
+                mbIsReady = true;
+                break;
+            }
+        }
+
+        if (mbIsReady)
+        {
+            Eigen::Vector3d g = am;
+            g.normalize();
+
+            Eigen::Matrix3d R = Eigen::Matrix3d::Identity();
+            if (mbEnableAlignment)
+            {
+                // i. Align z-axis with gravity
+                Eigen::Vector3d zv = g;
+
+                // ii. Make x-axis perpendicular to z-axis
+                Eigen::Vector3d ex = Eigen::Vector3d(1,0,0);
+                Eigen::Vector3d xv = ex-zv*zv.transpose()*ex;
+                xv.normalize();
+
+                // iii. Get y-axis
+                Eigen::Vector3d yv = SkewSymm(zv)*xv;
+                yv.normalize();
+
+                // iv. The orientation of {G} in {R0}
+                Eigen::Matrix3d tempR;
+                tempR << xv, yv, zv;
+                R = tempR;
+            }
+
+            xkk.setZero(26,1);
+            xkk.block(0,0,4,1) = RotToQuat(R);
+            xkk.block(7,0,3,1) = g;
+
+            if (nImuDataCount>1)
+            {
+                xkk.block(20,0,3,1) = wm; // bg
+                xkk.block(23,0,3,1) = am-mnGravity*g; // ba
+            }
+
+            double dt = 1/mnImuRate;
+
+            Pkk.setZero(24,24);
+            Pkk(0,0) = pow(1e-3,2); // qG
+            Pkk(1,1) = pow(1e-3,2);
+            Pkk(2,2) = pow(1e-3,2);
+            Pkk(3,3) = pow(1e-3,2); // pG
+            Pkk(4,4) = pow(1e-3,2);
+            Pkk(5,5) = pow(1e-3,2);
+            Pkk(6,6) = nImuDataCount*dt*pow(msigmaAccelNoise,2); // g
+            Pkk(7,7) = nImuDataCount*dt*pow(msigmaAccelNoise,2);
+            Pkk(8,8) = nImuDataCount*dt*pow(msigmaAccelNoise,2);
+            Pkk(18,18) = nImuDataCount*dt*pow(msigmaGyroBias,2); // bg
+            Pkk(19,19) = nImuDataCount*dt*pow(msigmaGyroBias,2);
+            Pkk(20,20) = nImuDataCount*dt*pow(msigmaGyroBias,2);
+            Pkk(21,21) = nImuDataCount*dt*pow(msigmaAccelBias,2); // ba
+            Pkk(22,22) = nImuDataCount*dt*pow(msigmaAccelBias,2);
+            Pkk(23,23) = nImuDataCount*dt*pow(msigmaAccelBias,2); 
+        }
         else
-            // Is static
             return;
     }
 
-    nImageCountAfterMoving++;
+    nImageCountAfterInit++;
 
 
     /**
@@ -263,7 +275,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp, const int& seq)
     /**
      * State augmentation
      */
-    if (nImageCountAfterMoving>1)
+    if (nImageCountAfterInit>1)
     {
         if (nCloneStates<mnSlidingWindowSize)
         {
