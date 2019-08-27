@@ -24,6 +24,8 @@
 #include <string>
 #include <boost/thread.hpp>
 
+#include <Eigen/Core>
+
 #include <opencv2/core/core.hpp>
 
 #include <tf/transform_broadcaster.h>
@@ -45,6 +47,8 @@ public:
 
     ~System();
 
+    void initialize(const Eigen::Vector3d& w, const Eigen::Vector3d& a, const int nImuData, const bool bEnableAlignment);
+
     void MonoVIO(const cv::Mat& im, const double& timestamp);
 
     void PushImuData(ImuData* data) { mpSensorDatabase->PushImuData(data); }
@@ -62,8 +66,8 @@ private:
     bool mbEnableAlignment;
     bool mbRecordOutputs;
 
-    bool mbIsReady;
     bool mbIsMoving;
+    bool mbIsReady;
 
     double mnThresholdAngle;
     double mnThresholdDispl;

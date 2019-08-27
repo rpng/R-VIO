@@ -392,10 +392,9 @@ void Updater::update(Eigen::VectorXd& xk1k,
                 tempHf_GR.makeGivens(tempHf(m-1,n), tempHf(m,n));
 
                 // Multiply G' to the corresponding lines (m-1,m) in each matrix
-
-                // Hf
                 // Note: we only apply G' to the nonzero cols [n:N-1], which is
                 //       equivalent to applying G' to the entire row [0:N-1].
+                // G'*Hf
                 (tempHf.block(m-1,n,2,N-n)).applyOnTheLeft(0,1,tempHf_GR.adjoint());
 
                 // G'*Hx
@@ -432,22 +431,25 @@ void Updater::update(Eigen::VectorXd& xk1k,
             nRowCount += nDOF;
             nGoodFeatCount++;
 
-            // Feature visualization (rviz)
-            // Note: pf is in the current reference frame {Rk}.
-            Eigen::VectorXd posek = mRelPosesToFirst.tail(7);
-            Eigen::Matrix3d Rk = QuatToRot(posek.head(4));
-            Eigen::Vector3d tk = posek.tail(3);
+            if (rho>0)
+            {
+                // Feature visualization (rviz)
+                // Note: pf is in the current reference frame {Rk}.
+                Eigen::VectorXd posek = mRelPosesToFirst.tail(7);
+                Eigen::Matrix3d Rk = QuatToRot(posek.head(4));
+                Eigen::Vector3d tk = posek.tail(3);
 
-            // pf in {C1}->{R1}->{Rk}
-            Eigen::Vector3d pfc = 1/rho*epfinv;
-            Eigen::Vector3d pf1 = mRic*pfc+mtic;
-            Eigen::Vector3d pfk = Rk*pf1+tk;
+                // pf in {C1}->{R1}->{Rk}
+                Eigen::Vector3d pfc = 1/rho*epfinv;
+                Eigen::Vector3d pf1 = mRic*pfc+mtic;
+                Eigen::Vector3d pfk = Rk*pf1+tk;
 
-            geometry_msgs::Point feat;
-            feat.x = pfk(0);
-            feat.y = pfk(1);
-            feat.z = pfk(2);
-            cloud.points.push_back(feat);
+                geometry_msgs::Point feat;
+                feat.x = pfk(0);
+                feat.y = pfk(1);
+                feat.z = pfk(2);
+                cloud.points.push_back(feat);
+            }
         }
         else
         {
@@ -503,10 +505,9 @@ void Updater::update(Eigen::VectorXd& xk1k,
                     tempHw_GR.makeGivens(tempHw(m-1,n), tempHw(m,n));
 
                     // Multiply G' to the corresponding lines (m-1,m) in each matrix
-
-                    // Ho
                     // Note: we only apply G' to the nonzero cols [n:N-1], which is
                     //       equivalent to applying G' to the entire row [0:N-1].
+                    // G'*H
                     (tempHw.block(m-1,n,2,N-n)).applyOnTheLeft(0,1,tempHw_GR.adjoint());
 
                     // G'*r
