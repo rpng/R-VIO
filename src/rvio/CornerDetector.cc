@@ -26,12 +26,11 @@
 namespace RVIO
 {
 
-CornerDetector::CornerDetector(const int nImageRows,
-                               const int nImageCols,
-                               const double nQualityLevel,
-                               const int nMinDistance) :
-    mnQualityLevel(nQualityLevel),
-    mnMinDistance(nMinDistance) {}
+CornerDetector::CornerDetector(const cv::FileStorage& fsSettings)
+{
+    mnQualityLevel = fsSettings["Tracker.nQualLvl"];
+    mnMinDistance = fsSettings["Tracker.nMinDist"];
+}
 
 
 int CornerDetector::DetectWithSubPix(const int nMaxCorners,

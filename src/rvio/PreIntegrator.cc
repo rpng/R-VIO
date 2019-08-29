@@ -27,11 +27,8 @@
 namespace RVIO
 {
 
-PreIntegrator::PreIntegrator(const std::string& strSettingsFile)
+PreIntegrator::PreIntegrator(const cv::FileStorage& fsSettings)
 {
-    // Read settings file
-    cv::FileStorage fsSettings(strSettingsFile, cv::FileStorage::READ);
-
     msigmaGyroNoise = fsSettings["IMU.sigma_g"];
     msigmaGyroBias = fsSettings["IMU.sigma_wg"];
     msigmaAccelNoise = fsSettings["IMU.sigma_a"];

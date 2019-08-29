@@ -25,6 +25,8 @@
 
 #include <Eigen/Core>
 
+#include "SensorDatabase.h"
+
 
 namespace RVIO
 {
@@ -60,7 +62,7 @@ class Ransac
 {
 public:
 
-    Ransac(bool bUseSampson, const double nInlierThreshold);
+    Ransac(const cv::FileStorage& fsSettings);
 
     /**
      * @create a set of random 2-point indices for RANSAC.
@@ -79,6 +81,11 @@ public:
                         const Eigen::Matrix3d& R, const int nIterNum);
 
     /**
+     * @get rotation matrix @p R by integrating the IMU (gyro) measurements.
+     */
+    void GetRotation(std::list<ImuData*>& plImuData, Eigen::Matrix3d& R);
+
+    /**
      * @count the number of inliers in the @nIterNum-th trial.
      */
     void CountInliers(const Eigen::MatrixXd& Points1, const Eigen::MatrixXd& Points2,
@@ -93,7 +100,7 @@ public:
      * @the output is the refined flag vector @p vInlierFlag.
      */
     int FindInliers(const Eigen::MatrixXd& Points1, const Eigen::MatrixXd& Points2,
-                    const Eigen::Matrix3d& R, std::vector<unsigned char>& vInlierFlag);
+                    std::list<ImuData*>& plImuData, std::vector<unsigned char>& vInlierFlag);
 
     /**
      * Metric for evaluation
@@ -111,6 +118,12 @@ private:
     bool mbUseSampson;
 
     double mnInlierThreshold;
+
+    double mnSmallAngle;
+
+    // Extrinsics
+    Eigen::Matrix3d mRci;
+    Eigen::Matrix3d mRic;
 
     RansacModel mRansacModel;
 

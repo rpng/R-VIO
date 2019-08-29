@@ -22,11 +22,12 @@
 #define SYSTEM_H
 
 #include <string>
-#include <boost/thread.hpp>
 
 #include <Eigen/Core>
 
 #include <opencv2/core/core.hpp>
+
+#include <boost/thread.hpp>
 
 #include <tf/transform_broadcaster.h>
 
@@ -75,10 +76,10 @@ private:
     // Gravity
     double mnGravity;
 
-    // Sigma{g,a,wg,wa}
+    // Sigma{g,wg,a,wa}
     double msigmaGyroNoise;
-    double msigmaAccelNoise;
     double msigmaGyroBias;
+    double msigmaAccelNoise;
     double msigmaAccelBias;
 
     // State and covariance

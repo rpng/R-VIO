@@ -23,7 +23,6 @@
 
 #include <list>
 #include <vector>
-#include <string>
 
 #include <Eigen/Core>
 
@@ -34,7 +33,6 @@
 
 #include "CornerDetector.h"
 #include "CornerCluster.h"
-#include "SensorDatabase.h"
 #include "Ransac.h"
 
 
@@ -45,15 +43,13 @@ class Tracker
 {
 public:
 
-    Tracker(const std::string& strSettingsFile);
+    Tracker(const cv::FileStorage& fsSettings);
 
     ~Tracker();
 
     void track(const cv::Mat& im, std::list<ImuData*>& plImuData);
 
     void UndistortAndNormalize(const int N, std::vector<cv::Point2f>& src, std::vector<cv::Point2f>& dst);
-
-    void GetRotation(Eigen::Matrix3d& R, std::list<ImuData*>& plImuData);
 
     void DisplayTrack(const cv::Mat& imIn, std::vector<cv::Point2f>& vPoints1, std::vector<cv::Point2f>& vPoints2,
                       std::vector<unsigned char>& vInlierFlag, cv_bridge::CvImage& imOut);
@@ -82,43 +78,34 @@ private:
     int mnMaxTrackingLength;
     int mnMinTrackingLength;
 
-    int mnFeatsToTrack;
-
     bool mbIsRGB;
     bool mbIsFisheye;
     bool mbIsTheFirstImage;
 
     bool mbEnableEqualizer;
 
-    double mnSmallAngle;
-
     // Intrinsics
     cv::Mat mK;
     cv::Mat mDistCoef;
 
-    // Extrinsics
-    Eigen::Matrix3d mRci;
-    Eigen::Vector3d mtci;
-    Eigen::Matrix3d mRic;
-    Eigen::Vector3d mtic;
-
     /**
      * Feature tracking history
      *
-     * @each list (row) number is a feature index.
+     * @each list number is a reusable feature index.
      * @each list corresponds to a feature with its size the tracking length.
      * @only store the undistorted and normalized coordinates, (u'/f,v'/f).
      */
     std::vector<std::list<cv::Point2f> > mvlTrackingHistory;
-
-    // Features to track
-    std::vector<cv::Point2f> mvFeatsToTrack;
 
     // Indices of inliers
     std::vector<int> mvInlierIndices;
 
     // Indices available
     std::list<int> mlFreeIndices;
+
+    // Features to track
+    std::vector<cv::Point2f> mvFeatsToTrack;
+    int mnFeatsToTrack;
 
     // For RANSAC
     Eigen::MatrixXd mPoints1ForRansac;

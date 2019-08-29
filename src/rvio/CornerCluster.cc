@@ -24,14 +24,15 @@
 namespace RVIO
 {
 
-CornerCluster::CornerCluster(const int nImageRows,
-                             const int nImageCols,
-                             const int nBlockSize)
+CornerCluster::CornerCluster(const cv::FileStorage& fsSettings)
 {
-    mnBlockSize = nBlockSize;
+    const int nImageRows = fsSettings["Camera.height"];
+    const int nImageCols = fsSettings["Camera.width"];
 
-    mnGridRows = floor(nImageRows/nBlockSize)+1;
-    mnGridCols = floor(nImageCols/nBlockSize)+1;
+    mnBlockSize = fsSettings["Tracker.nGridSize"];
+
+    mnGridRows = floor(nImageRows/mnBlockSize)+1;
+    mnGridCols = floor(nImageCols/mnBlockSize)+1;
 
     mnBlocks = mnGridCols*mnGridRows;
 

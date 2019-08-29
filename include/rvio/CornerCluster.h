@@ -34,11 +34,11 @@ class CornerCluster
 {
 public:
 
-    CornerCluster(const int nImageRows, const int nImageCols, const int nBlockSize=50);
+    CornerCluster(const cv::FileStorage& fsSettings);
 
     void ChessGrid(std::vector<cv::Point2f>& vCorners);
 
-    int FindNew(std::vector<cv::Point2f>& vRefCorners, std::vector<cv::Point2f>& vNewCorners, const int nMinDistance=5);
+    int FindNew(std::vector<cv::Point2f>& vRefCorners, std::vector<cv::Point2f>& vNewCorners, const int nMinDistance=10);
 
 private:
 

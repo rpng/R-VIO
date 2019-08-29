@@ -83,9 +83,9 @@ System::System(const std::string& strSettingsFile)
     mbIsMoving = false;
     mbIsReady = false;
 
-    mpTracker = new Tracker(strSettingsFile);
-    mpUpdater = new Updater(strSettingsFile);
-    mpPreIntegrator = new PreIntegrator(strSettingsFile);
+    mpTracker = new Tracker(fsSettings);
+    mpUpdater = new Updater(fsSettings);
+    mpPreIntegrator = new PreIntegrator(fsSettings);
     mpSensorDatabase = new SensorDatabase();
 
     mPathPub = mSystemNode.advertise<nav_msgs::Path>("/rvio/trajectory", 1);

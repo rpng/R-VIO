@@ -18,6 +18,10 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Eigen/Core>
+
+#include <opencv2/core/eigen.hpp>
+
 #include "rvio/Ransac.h"
 #include "numerics.h"
 
@@ -25,10 +29,22 @@
 namespace RVIO
 {
 
-Ransac::Ransac(bool bUseSampson,
-               const double nInlierThreshold) :
-    mbUseSampson(bUseSampson),
-    mnInlierThreshold(nInlierThreshold) {}
+Ransac::Ransac(const cv::FileStorage& fsSettings)
+{
+    const int bUseSampson = fsSettings["Tracker.UseSampson"];
+    mbUseSampson = bUseSampson;
+
+    mnInlierThreshold = fsSettings["Tracker.nInlierThrd"];
+
+    mnSmallAngle = fsSettings["IMU.nSmallAngle"];
+
+    cv::Mat T(4,4,CV_32F);
+    fsSettings["Camera.T_BC0"] >> T;
+    Eigen::Matrix4d Tic;
+    cv::cv2eigen(T,Tic);
+    mRic = Tic.block<3,3>(0,0);
+    mRci = mRic.transpose();
+}
 
 
 void Ransac::SetPointSet(const int nInlierCandidates,
@@ -83,8 +99,8 @@ void Ransac::SetRansacModel(const Eigen::MatrixXd& Points1,
     Eigen::Vector3d pointB0 = R*pointB1;
 
     // The solution of (p2^T)[tx]p0=0, where
-    // Two directional angles need to be solved: alpha, beta.
-    // Two correspondences for solving it: {A0,A2} and {B0,B2}.
+    // t is the function of two directional angles: alpha and beta.
+    // We need two correspondences for solving t: {A0,A2} and {B0,B2}.
     double c1 = pointA2(0)*pointA0(1)-pointA0(0)*pointA2(1);
     double c2 = pointA0(1)*pointA2(2)-pointA2(1)*pointA0(2);
     double c3 = pointA2(0)*pointA0(2)-pointA0(0)*pointA2(2);
@@ -98,6 +114,44 @@ void Ransac::SetRansacModel(const Eigen::MatrixXd& Points1,
 
     // Add result to the RANSAC model
     mRansacModel.hypotheses.block<3,3>(3*nIterNum,0) = SkewSymm(t)*R;
+}
+
+
+void Ransac::GetRotation(std::list<ImuData*>& plImuData,
+                         Eigen::Matrix3d& R)
+{
+    Eigen::Matrix3d tempR;
+    tempR.setIdentity();
+
+    Eigen::Matrix3d I;
+    I.setIdentity();
+
+    for (std::list<ImuData*>::const_iterator lit=plImuData.begin();
+         lit!=plImuData.end(); ++lit)
+    {
+        Eigen::Vector3d wm = (*lit)->AngularVel;
+        double dt = (*lit)->TimeInterval;
+
+        bool bIsSmallAngle = false;
+        if (wm.norm()<mnSmallAngle)
+            bIsSmallAngle = true;
+
+        double w1 = wm.norm();
+        double wdt = w1*dt;
+        Eigen::Matrix3d wx = SkewSymm(wm);
+        Eigen::Matrix3d wx2 = wx*wx;
+
+        Eigen::Matrix3d deltaR;
+        if (bIsSmallAngle)
+            deltaR = I-dt*wx+(.5*pow(dt,2))*wx2;
+        else
+            deltaR = I-(sin(wdt)/w1)*wx+((1-cos(wdt))/pow(w1,2))*wx2;
+        assert(std::isnan(deltaR.norm())!=true);
+
+        tempR = deltaR*tempR;
+    }
+
+    R = mRci*tempR*mRic;
 }
 
 
@@ -125,9 +179,10 @@ void Ransac::CountInliers(const Eigen::MatrixXd& Points1,
 
 int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
                         const Eigen::MatrixXd& Points2,
-                        const Eigen::Matrix3d& R,
+                        std::list<ImuData*>& plImuData,
                         std::vector<unsigned char>& vInlierFlag)
 {
+    // Reset the model
     mRansacModel.hypotheses.setZero();
     mRansacModel.nInliers.setZero();
     mRansacModel.twoPoints.setZero();
@@ -151,6 +206,9 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
         // Too few inliers
         return 0;
 
+    Eigen::Matrix3d R;
+    GetRotation(plImuData, R);
+
     int nWinnerInliersNumber = 0;
     int nWinnerHypothesisIdx = 0;
     for (int i=0; i<mRansacModel.nIterations; ++i)
@@ -169,8 +227,8 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
 
     Eigen::Matrix3d WinnerE = mRansacModel.hypotheses.block<3,3>(3*nWinnerHypothesisIdx,0);
 
-    // Find outliers
-    int nNewFoundOutliers = 0;
+    // Find new outliers
+    int nNewOutliers = 0;
     for (int i=0; i<nInlierCandidates; ++i)
     {
         int idx = mvInlierCandidateIndices.at(i);
@@ -185,11 +243,11 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
         {
             // Mark as outlier
             vInlierFlag.at(idx) = 0;
-            nNewFoundOutliers++;
+            nNewOutliers++;
         }
     }
 
-    return nInlierCandidates-nNewFoundOutliers;
+    return nInlierCandidates-nNewOutliers;
 }
 
 

@@ -23,7 +23,6 @@
 
 #include <list>
 #include <vector>
-#include <string>
 
 #include <Eigen/Core>
 
@@ -39,7 +38,7 @@ class Updater
 {
 public:
 
-    Updater(const std::string& strSettingsFile);
+    Updater(const cv::FileStorage& fsSettings);
 
     void update(Eigen::VectorXd& xk1k, Eigen::MatrixXd& Pk1k, std::vector<unsigned char>& pvFeatTypesForUpdate,
                 std::vector<std::list<cv::Point2f> >& pvlFeatMeasForUpdate);

@@ -35,11 +35,8 @@ static int cloud_id = 0;
 std_msgs::ColorRGBA colorLandmark;
 geometry_msgs::Vector3 scaleLandmark;
 
-Updater::Updater(const std::string& strSettingsFile)
+Updater::Updater(const cv::FileStorage& fsSettings)
 {
-    // Read settings file
-    cv::FileStorage fsSettings(strSettingsFile, cv::FileStorage::READ);
-
     mnCamRate = fsSettings["Camera.fps"];
 
     msigmaImageNoiseX = fsSettings["Camera.sigma_px"];

@@ -33,7 +33,7 @@ class CornerDetector
 {
 public:
 
-    CornerDetector(const int nImageRows, const int nImageCols, const double nQualityLevel=0.01, const int nMinDistance=10);
+    CornerDetector(const cv::FileStorage& fsSettings);
 
     /**
      * Corner detector
@@ -48,6 +48,9 @@ public:
     int DetectWithSubPix(const int nMaxCorners, const cv::Mat& im, std::vector<cv::Point2f>& vCorners);
 
 private:
+
+    int mnImageRows;
+    int mnImageCols;
 
     double mnQualityLevel;
 
