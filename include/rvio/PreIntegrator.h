@@ -37,7 +37,7 @@ public:
 
     PreIntegrator(const cv::FileStorage& fsSettings);
 
-    void propagate(Eigen::VectorXd& xkk, Eigen::MatrixXd& Pkk, std::list<ImuData*>& plImuData);
+    void propagate(Eigen::VectorXd& xkk, Eigen::MatrixXd& Pkk, std::list<ImuData*>& lImuData);
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

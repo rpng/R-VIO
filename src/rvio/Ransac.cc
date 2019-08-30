@@ -117,7 +117,7 @@ void Ransac::SetRansacModel(const Eigen::MatrixXd& Points1,
 }
 
 
-void Ransac::GetRotation(std::list<ImuData*>& plImuData,
+void Ransac::GetRotation(std::list<ImuData*>& lImuData,
                          Eigen::Matrix3d& R)
 {
     Eigen::Matrix3d tempR;
@@ -126,8 +126,8 @@ void Ransac::GetRotation(std::list<ImuData*>& plImuData,
     Eigen::Matrix3d I;
     I.setIdentity();
 
-    for (std::list<ImuData*>::const_iterator lit=plImuData.begin();
-         lit!=plImuData.end(); ++lit)
+    for (std::list<ImuData*>::const_iterator lit=lImuData.begin();
+         lit!=lImuData.end(); ++lit)
     {
         Eigen::Vector3d wm = (*lit)->AngularVel;
         double dt = (*lit)->TimeInterval;
@@ -179,7 +179,7 @@ void Ransac::CountInliers(const Eigen::MatrixXd& Points1,
 
 int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
                         const Eigen::MatrixXd& Points2,
-                        std::list<ImuData*>& plImuData,
+                        std::list<ImuData*>& lImuData,
                         std::vector<unsigned char>& vInlierFlag)
 {
     // Reset the model
@@ -207,7 +207,7 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
         return 0;
 
     Eigen::Matrix3d R;
-    GetRotation(plImuData, R);
+    GetRotation(lImuData, R);
 
     int nWinnerInliersNumber = 0;
     int nWinnerHypothesisIdx = 0;

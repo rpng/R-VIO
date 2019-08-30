@@ -56,7 +56,7 @@ public:
     void PushImuData(ImuData* pInData);
     bool PopImuData(ImuData* pOutData);
 
-    int GetImuDataByTimeStamp(const double nTimeStamp, std::list<ImuData*>& plOutData);
+    int GetImuDataByTimestamp(const double nTimestamp, std::list<ImuData*>& lOutData);
 
 protected:
 

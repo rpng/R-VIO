@@ -43,7 +43,7 @@ int CornerDetector::DetectWithSubPix(const int nMaxCorners,
 
     if (vCorners.size()!=0)
     {
-        // Refine the location
+        // Refine the locations
         cv::Size subPixWinSize(10,10);
         cv::Size subPixZeroZone(-1,-1);
         cv::TermCriteria subPixCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 20, 0.01);

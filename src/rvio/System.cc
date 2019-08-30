@@ -165,7 +165,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     static int nImageCountAfterInit = 0;
 
     std::list<ImuData*> lImuDataSeq;
-    if (mpSensorDatabase->GetImuDataByTimeStamp(timestamp+mnCamTimeOffset, lImuDataSeq)==0)
+    if (mpSensorDatabase->GetImuDataByTimestamp(timestamp+mnCamTimeOffset, lImuDataSeq)==0)
         return;
 
 

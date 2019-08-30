@@ -70,8 +70,8 @@ Updater::Updater(const cv::FileStorage& fsSettings)
 
 void Updater::update(Eigen::VectorXd& xk1k,
                      Eigen::MatrixXd& Pk1k,
-                     std::vector<unsigned char>& pvFeatTypesForUpdate,
-                     std::vector<std::list<cv::Point2f> >& pvlFeatMeasForUpdate)
+                     std::vector<unsigned char>& vFeatTypesForUpdate,
+                     std::vector<std::list<cv::Point2f> >& vlFeatMeasForUpdate)
 {
     // Interact with ROS rviz
     visualization_msgs::Marker cloud;
@@ -86,12 +86,12 @@ void Updater::update(Eigen::VectorXd& xk1k,
     cloud.type = visualization_msgs::Marker::POINTS;
 
     // Number of features
-    int nFeat = (int)pvFeatTypesForUpdate.size();
+    int nFeat = (int)vFeatTypesForUpdate.size();
 
     // Number of (max) rows of matrices
     int nRows = 0;
     for (int i=0; i<nFeat; ++i)
-        nRows += 2*(int)pvlFeatMeasForUpdate.at(i).size();
+        nRows += 2*(int)vlFeatMeasForUpdate.at(i).size();
 
     // Number of clone states
     int nCloneStates = (xk1k.rows()-26)/7;
@@ -107,8 +107,8 @@ void Updater::update(Eigen::VectorXd& xk1k,
 
     for (int featIdx=0; featIdx<nFeat; ++featIdx)
     {
-        char featType = pvFeatTypesForUpdate.at(featIdx);
-        std::list<cv::Point2f> lFeatMeas = pvlFeatMeasForUpdate.at(featIdx);
+        char featType = vFeatTypesForUpdate.at(featIdx);
+        std::list<cv::Point2f> lFeatMeas = vlFeatMeasForUpdate.at(featIdx);
 
         int nTrackLength = (int)lFeatMeas.size();
         int nTrackPhases = nTrackLength-1;

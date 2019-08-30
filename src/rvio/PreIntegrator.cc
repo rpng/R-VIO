@@ -51,7 +51,7 @@ PreIntegrator::PreIntegrator(const cv::FileStorage& fsSettings)
 
 void PreIntegrator::propagate(Eigen::VectorXd& xkk,
                               Eigen::MatrixXd& Pkk,
-                              std::list<ImuData*>& plImuData)
+                              std::list<ImuData*>& lImuData)
 {
     Eigen::Vector3d gk = xkk.block(7,0,3,1);  // unit vector
     Eigen::Vector4d qk = xkk.block(10,0,4,1); // [0,0,0,1]
@@ -95,8 +95,8 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
 
     double Dt = 0;
 
-    for (std::list<ImuData*>::const_iterator lit=plImuData.begin();
-         lit!=plImuData.end(); ++lit)
+    for (std::list<ImuData*>::const_iterator lit=lImuData.begin();
+         lit!=lImuData.end(); ++lit)
     {
         Eigen::Vector3d wm = (*lit)->AngularVel;
         Eigen::Vector3d am = (*lit)->LinearAccel;

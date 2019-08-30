@@ -83,7 +83,7 @@ public:
     /**
      * @get rotation matrix @p R by integrating the IMU (gyro) measurements.
      */
-    void GetRotation(std::list<ImuData*>& plImuData, Eigen::Matrix3d& R);
+    void GetRotation(std::list<ImuData*>& lImuData, Eigen::Matrix3d& R);
 
     /**
      * @count the number of inliers in the @nIterNum-th trial.
@@ -100,7 +100,7 @@ public:
      * @the output is the refined flag vector @p vInlierFlag.
      */
     int FindInliers(const Eigen::MatrixXd& Points1, const Eigen::MatrixXd& Points2,
-                    std::list<ImuData*>& plImuData, std::vector<unsigned char>& vInlierFlag);
+                    std::list<ImuData*>& lImuData, std::vector<unsigned char>& vInlierFlag);
 
     /**
      * Metric for evaluation
