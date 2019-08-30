@@ -32,11 +32,9 @@
 namespace RVIO
 {
 
-// Record the outputs
-std::string pkg_path = ros::package::getPath("rvio");
-static std::ofstream fPoseResults(pkg_path+"/result/pose_ests.dat");
-
 nav_msgs::Path path;
+
+std::ofstream fPoseResults;
 
 System::System(const std::string& strSettingsFile)
 {
@@ -76,6 +74,12 @@ System::System(const std::string& strSettingsFile)
 
     const int bRecordOutputs = fsSettings["INI.RecordOutputs"];
     mbRecordOutputs = bRecordOutputs;
+
+    if (mbRecordOutputs)
+    {
+        std::string pkg_path = ros::package::getPath("rvio");
+        fPoseResults.open(pkg_path+"/stamped_pose_ests.dat", std::ofstream::out | std::ofstream::app);
+    }
 
     mnThresholdAngle = fsSettings["INI.nThresholdAngle"];
     mnThresholdDispl = fsSettings["INI.nThresholdDispl"];

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(rvio)
 
-# Set our build type
+# Set build type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
@@ -26,11 +26,8 @@ endif()
 # Enable compile optimizations
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fsee -fomit-frame-pointer -fno-signed-zeros -fno-math-errno -funroll-loops")
 
-# Enable debug flags (use if you want to debug in gdb)
+# Enable debug flags (if you want to debug in gdb)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall")
-
-# Include our cmake files
-LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules/)
 
 # Find catkin (the ROS build system)
 # Add this for finding ros dependencies
@@ -46,7 +43,7 @@ catkin_package(CATKIN_DEPENDS
 )
 
 # Include libraries
-find_package(Eigen3 3.1.0 REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(OpenCV 3.0 QUIET)
 if(NOT OpenCV_FOUND)
   find_package(OpenCV 2.4.3 QUIET)
@@ -55,7 +52,7 @@ if(NOT OpenCV_FOUND)
   endif()
 endif()
 
-# Include directory for headers
+# Include directories of headers
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
