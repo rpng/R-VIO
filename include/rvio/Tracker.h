@@ -22,6 +22,7 @@
 #define TRACKER_H
 
 #include <list>
+#include <deque>
 #include <vector>
 
 #include <Eigen/Core>
@@ -49,15 +50,18 @@ public:
 
     void track(const cv::Mat& im, std::list<ImuData*>& plImuData);
 
-    void UndistortAndNormalize(const int N, std::vector<cv::Point2f>& src, std::vector<cv::Point2f>& dst);
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+private:
+
+    template <typename T1, typename T2>
+    void UndistortAndNormalize(const int N, T1& src, T2& dst);
 
     void DisplayTrack(const cv::Mat& imIn, std::vector<cv::Point2f>& vPoints1, std::vector<cv::Point2f>& vPoints2,
                       std::vector<unsigned char>& vInlierFlag, cv_bridge::CvImage& imOut);
 
-    void DisplayNewer(const cv::Mat& imIn, std::vector<cv::Point2f>& vFeats, std::vector<cv::Point2f>& vNewFeats,
+    void DisplayNewer(const cv::Mat& imIn, std::vector<cv::Point2f>& vFeats, std::deque<cv::Point2f>& qNewFeats,
                       cv_bridge::CvImage& imOut);
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 public:
 

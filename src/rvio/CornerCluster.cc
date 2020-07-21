@@ -61,7 +61,7 @@ void CornerCluster::ChessGrid(std::vector<cv::Point2f>& vCorners)
 
 
 int CornerCluster::FindNew(std::vector<cv::Point2f>& vRefCorners,
-                           std::vector<cv::Point2f>& vNewCorners,
+                           std::deque<cv::Point2f>& qNewCorners,
                            const int nMinDistance)
 {
     for (std::vector<cv::Point2f>::const_iterator vit1=vRefCorners.begin();
@@ -90,14 +90,14 @@ int CornerCluster::FindNew(std::vector<cv::Point2f>& vRefCorners,
                 }
 
                 if (count==(int)mvvGrid.at(nBlockIdx).size())
-                    vNewCorners.push_back(*vit1);
+                    qNewCorners.push_back(*vit1);
             }
             else
-                vNewCorners.push_back(*vit1);
+                qNewCorners.push_back(*vit1);
         }
     }
 
-    return vNewCorners.size();
+    return qNewCorners.size();
 }
 
 } // namespace RVIO

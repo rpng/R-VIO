@@ -95,6 +95,7 @@ private:
     // Interact with rviz
     ros::NodeHandle mSystemNode;
     ros::Publisher mPathPub;
+    ros::Publisher mOdomPub;
     tf::TransformBroadcaster mTfPub;
 };
 

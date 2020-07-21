@@ -22,6 +22,7 @@
 
 #include <ros/package.h>
 #include <nav_msgs/Path.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 
@@ -93,6 +94,7 @@ System::System(const std::string& strSettingsFile)
     mpSensorDatabase = new SensorDatabase();
 
     mPathPub = mSystemNode.advertise<nav_msgs::Path>("/rvio/trajectory", 1);
+    mOdomPub = mSystemNode.advertise<nav_msgs::Odometry>("/rvio/odometry", 1);
 }
 
 
@@ -331,6 +333,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     Eigen::Vector3d gk = xkk.block(7,0,3,1);
     Eigen::Vector4d qk = xkk.block(10,0,4,1);
     Eigen::Vector3d pk = xkk.block(14,0,3,1);
+    Eigen::Vector3d vk = xkk.block(17,0,3,1);
 
     Eigen::Matrix3d RG = QuatToRot(qG);
     Eigen::Matrix3d Rk = QuatToRot(qk);
@@ -395,6 +398,26 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     transformStamped.transform.rotation.w = qkG(3);
 
     mTfPub.sendTransform(transformStamped);
+
+    // Broadcast the odometry
+    nav_msgs::Odometry odom;
+    odom.header.stamp = ros::Time::now();
+    odom.header.frame_id = "world";
+    //set the position
+    odom.pose.pose.position.x = pGk(0);
+    odom.pose.pose.position.y = pGk(1);
+    odom.pose.pose.position.z = pGk(2);
+    odom.pose.pose.orientation.x = qkG(0);
+    odom.pose.pose.orientation.y = qkG(1);
+    odom.pose.pose.orientation.z = qkG(2);
+    odom.pose.pose.orientation.w = qkG(3);
+    //set the velocity
+    odom.child_frame_id = "imu";
+    odom.twist.twist.linear.x = vk(0);
+    odom.twist.twist.linear.y = vk(1);
+    odom.twist.twist.linear.z = vk(2);
+
+    mOdomPub.publish(odom);
 
     // Visualize the trajectory
     geometry_msgs::PoseStamped pose;

@@ -21,7 +21,7 @@
 #ifndef CORNER_CLUSTER_H
 #define CORNER_CLUSTER_H
 
-#include <list>
+#include <deque>
 #include <vector>
 
 #include <opencv2/core/core.hpp>
@@ -38,7 +38,7 @@ public:
 
     void ChessGrid(std::vector<cv::Point2f>& vCorners);
 
-    int FindNew(std::vector<cv::Point2f>& vRefCorners, std::vector<cv::Point2f>& vNewCorners, const int nMinDistance=10);
+    int FindNew(std::vector<cv::Point2f>& vRefCorners, std::deque<cv::Point2f>& qNewCorners, const int nMinDistance=10);
 
 private:
 

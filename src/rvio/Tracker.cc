@@ -103,9 +103,10 @@ Tracker::~Tracker()
 }
 
 
+template <typename T1, typename T2>
 void Tracker::UndistortAndNormalize(const int N,
-                                    std::vector<cv::Point2f>& src,
-                                    std::vector<cv::Point2f>& dst)
+                                    T1& src,
+                                    T2& dst)
 {
     cv::Mat mat(N,2,CV_32F);
 
@@ -165,7 +166,7 @@ void Tracker::DisplayTrack(const cv::Mat& imIn,
 
 void Tracker::DisplayNewer(const cv::Mat& imIn,
                            std::vector<cv::Point2f>& vFeats,
-                           std::vector<cv::Point2f>& vNewFeats,
+                           std::deque<cv::Point2f>& qNewFeats,
                            cv_bridge::CvImage& imOut)
 {
     imOut.header = std_msgs::Header();
@@ -176,8 +177,8 @@ void Tracker::DisplayNewer(const cv::Mat& imIn,
     for (int i=0; i<(int)vFeats.size(); ++i)
         cv::circle(imOut.image, vFeats.at(i), 3, blue, 0);
 
-    for (int i=0; i<(int)vNewFeats.size(); ++i)
-        cv::circle(imOut.image, vNewFeats.at(i), 3, green, -1);
+    for (int i=0; i<(int)qNewFeats.size(); ++i)
+        cv::circle(imOut.image, qNewFeats.at(i), 3, green, -1);
 }
 
 
@@ -350,37 +351,31 @@ void Tracker::track(const cv::Mat& im,
         {
             // Feature refill
             std::vector<cv::Point2f> vTempFeats;
-            std::vector<cv::Point2f> vNewFeats;
+            std::deque<cv::Point2f> qNewFeats;
 
             mpCornerCluster->ChessGrid(mvFeatsToTrack);
             mpCornerDetector->DetectWithSubPix(mnMaxFeatsPerImage, im, vTempFeats);
-            int nNewFeats = mpCornerCluster->FindNew(vTempFeats, vNewFeats, 10);
+            int nNewFeats = mpCornerCluster->FindNew(vTempFeats, qNewFeats, 10);
 
             // Show the result in rviz
             cv_bridge::CvImage imNewer;
-            DisplayNewer(im, vTempFeats, vNewFeats, imNewer);
+            DisplayNewer(im, vTempFeats, qNewFeats, imNewer);
             mNewerPub.publish(imNewer.toImageMsg());
 
             if (nNewFeats!=0)
             {
-                std::list<cv::Point2f> lNewFeats;
-                std::copy(vNewFeats.begin(), vNewFeats.end(), std::back_inserter(lNewFeats));
-
-                std::vector<cv::Point2f> vNewFeatsUndistNorm;
-                UndistortAndNormalize(nNewFeats, vNewFeats, vNewFeatsUndistNorm);
-
-                std::list<cv::Point2f> lNewFeatsUndistNorm;
-                std::copy(vNewFeatsUndistNorm.begin(), vNewFeatsUndistNorm.end(), std::back_inserter(lNewFeatsUndistNorm));
+                std::deque<cv::Point2f> qNewFeatsUndistNorm;
+                UndistortAndNormalize(nNewFeats, qNewFeats, qNewFeatsUndistNorm);
 
                 for (;;)
                 {
                     int idx = mlFreeIndices.front();
                     vInlierIndicesToTrack.push_back(idx);
 
-                    cv::Point2f pt = lNewFeats.front();
+                    cv::Point2f pt = qNewFeats.front();
                     mvFeatsToTrack.push_back(pt);
 
-                    cv::Point2f ptUN = lNewFeatsUndistNorm.front();
+                    cv::Point2f ptUN = qNewFeatsUndistNorm.front();
                     mvlTrackingHistory.at(idx).push_back(ptUN);
 
                     Eigen::Vector3d ptUNe = Eigen::Vector3d(ptUN.x,ptUN.y,1);
@@ -389,10 +384,10 @@ void Tracker::track(const cv::Mat& im,
                     nInlierCount++;
 
                     mlFreeIndices.pop_front();
-                    lNewFeats.pop_front();
-                    lNewFeatsUndistNorm.pop_front();
+                    qNewFeats.pop_front();
+                    qNewFeatsUndistNorm.pop_front();
 
-                    if (mlFreeIndices.empty() || lNewFeats.empty() || lNewFeatsUndistNorm.empty() || nInlierCount==mnMaxFeatsPerImage)
+                    if (mlFreeIndices.empty() || qNewFeats.empty() || qNewFeatsUndistNorm.empty() || nInlierCount==mnMaxFeatsPerImage)
                         break;
                 }
             }
