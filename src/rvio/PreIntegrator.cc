@@ -20,8 +20,8 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "rvio/PreIntegrator.h"
-#include "numerics.h"
+#include "PreIntegrator.h"
+#include "../util/Numerics.h"
 
 
 namespace RVIO

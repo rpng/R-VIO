@@ -20,7 +20,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "rvio/CornerDetector.h"
+#include "CornerDetector.h"
 
 
 namespace RVIO

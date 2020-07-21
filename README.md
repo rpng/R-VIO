@@ -4,12 +4,33 @@ R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** alg
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, July 2019: [here](https://journals.sagepub.com/doi/10.1177/0278364919853361).
 
+```
+@article{huai2019robocentric,
+  title     = {Robocentric visual--inertial odometry},
+  author    = {Huai, Zheng and Huang, Guoquan},
+  journal   = {The International Journal of Robotics Research},
+  publisher = {SAGE Publications Sage UK: London, England},
+  url       = {\url{https://journals.sagepub.com/doi/10.1177/0278364919853361}}
+}
+```
+
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [here](https://ieeexplore.ieee.org/document/8593643).
 
-Video (on **EuRoC** and our handheld datasets): https://www.youtube.com/watch?v=UtiZ0EKa55M.
+```
+@inproceedings{huai2018robocentric,
+  title     = {Robocentric visual-inertial odometry},
+  author    = {Huai, Zheng and Huang, Guoquan},
+  booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages     = {6319--6326},
+  year      = {2018},
+  address   = {Madrid, Spain}
+}
+```
+
+IROS video (on **EuRoC** and our handheld datasets): https://www.youtube.com/watch?v=UtiZ0EKa55M.
 ![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
 
-Video (on our 9.8km **urban driving** dataset): https://www.youtube.com/watch?v=l9IC2ddBEYQ.
+IJRR video (on our 9.8km **urban driving** dataset): https://www.youtube.com/watch?v=l9IC2ddBEYQ.
 ![](rvio.gif)
 
 ## 1. Prerequisites
@@ -45,9 +66,4 @@ You can also run R-VIO with your own sensor (data) by creating a config file `rv
 
 ## 3. License
 
-The source code is released under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
-
-We are still working on improving the code reliability. For any technical issue, please contact Zheng Huai: <zhuai@udel.edu>.
-
-For commercial inquiries, please contact Guoquan (Paul) Huang: <ghuang@udel.edu>.
-
+The source code is released under [GNU General Public License v3 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html) license.

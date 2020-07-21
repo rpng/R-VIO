@@ -27,8 +27,6 @@
 
 #include <opencv2/core/core.hpp>
 
-#include <boost/thread.hpp>
-
 #include <tf/transform_broadcaster.h>
 
 #include "Tracker.h"

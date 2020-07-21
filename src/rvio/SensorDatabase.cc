@@ -18,7 +18,7 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "rvio/SensorDatabase.h"
+#include "SensorDatabase.h"
 
 
 namespace RVIO

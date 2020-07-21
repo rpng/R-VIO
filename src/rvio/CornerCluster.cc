@@ -18,7 +18,7 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "rvio/CornerCluster.h"
+#include "CornerCluster.h"
 
 
 namespace RVIO

@@ -24,12 +24,11 @@
 #include <Eigen/Core>
 
 
-typedef Eigen::Vector4d quaternion;
-
 /**
  * Quaternion multiplication
  */
-inline quaternion QuatMul(const quaternion& q1, const quaternion& q2)
+inline Eigen::Vector4d QuatMul(const Eigen::Vector4d& q1, 
+                               const Eigen::Vector4d& q2)
 {
     Eigen::Matrix4d mat;
 
@@ -53,7 +52,7 @@ inline quaternion QuatMul(const quaternion& q1, const quaternion& q2)
     mat(3,2) = -q1(2,0);
     mat(3,3) =  q1(3,0);
 
-    quaternion q = mat*q2;
+    Eigen::Vector4d q = mat*q2;
 
     q.normalize();
 
@@ -67,9 +66,9 @@ inline quaternion QuatMul(const quaternion& q1, const quaternion& q2)
 /**
  * Quaternion inverse
  */
-inline quaternion QuatInv(const quaternion& q)
+inline Eigen::Vector4d QuatInv(const Eigen::Vector4d& q)
 {
-    quaternion q_inv;
+    Eigen::Vector4d q_inv;
 
     if (q(3)>0)
     {
@@ -109,7 +108,7 @@ inline Eigen::Matrix3d SkewSymm(const Eigen::Vector3d& w)
 /**
  * Convert quaternion to rotation matrix (orthonormal)
  */
-inline Eigen::Matrix3d QuatToRot(const quaternion& q)
+inline Eigen::Matrix3d QuatToRot(const Eigen::Vector4d& q)
 {
     Eigen::Matrix3d qx = SkewSymm(q.block<3, 1>(0,0));
     Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
@@ -124,11 +123,11 @@ inline Eigen::Matrix3d QuatToRot(const quaternion& q)
 /**
  * Convert rotation matrix to quaternion according to the JPL procedure (Breckenridge Memo)
  */
-inline quaternion RotToQuat(const Eigen::MatrixXd& R)
+inline Eigen::Vector4d RotToQuat(const Eigen::MatrixXd& R)
 {
-    double T = R.trace();
+    Eigen::Vector4d q;
 
-    quaternion q;
+    double T = R.trace();
 
     if ((R(0,0)>T)&&(R(0,0)>R(1,1))&&(R(0,0)>R(2,2)))
     {

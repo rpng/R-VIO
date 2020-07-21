@@ -7,8 +7,8 @@
 # IMU data rate
 IMU.dps: 200
 
-# Threshold of small angle (<1/2deg)
-IMU.nSmallAngle: 0.008726646
+# Threshold of small angle [rad] (<.1deg)
+IMU.nSmallAngle: 0.001745329
 
 # IMU sensor noise
 IMU.sigma_g: 1.6968e-04

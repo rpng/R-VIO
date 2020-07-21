@@ -20,14 +20,16 @@
 
 #include <fstream>
 
+#include <boost/thread.hpp>
+
 #include <ros/package.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 
-#include "rvio/System.h"
-#include "numerics.h"
+#include "System.h"
+#include "../util/Numerics.h"
 
 
 namespace RVIO

@@ -22,8 +22,8 @@
 
 #include <opencv2/core/eigen.hpp>
 
-#include "rvio/Ransac.h"
-#include "numerics.h"
+#include "Ransac.h"
+#include "../util/Numerics.h"
 
 
 namespace RVIO

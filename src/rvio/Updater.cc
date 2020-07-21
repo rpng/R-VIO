@@ -24,8 +24,8 @@
 
 #include <visualization_msgs/Marker.h>
 
-#include "rvio/Updater.h"
-#include "numerics.h"
+#include "Updater.h"
+#include "../util/Numerics.h"
 
 
 namespace RVIO
