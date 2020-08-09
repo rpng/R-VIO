@@ -90,10 +90,10 @@ System::System(const std::string& strSettingsFile)
     mbIsMoving = false;
     mbIsReady = false;
 
+    mpImuBuffer = new ImuBuffer();
     mpTracker = new Tracker(fsSettings);
     mpUpdater = new Updater(fsSettings);
     mpPreIntegrator = new PreIntegrator(fsSettings);
-    mpSensorDatabase = new SensorDatabase();
 
     mPathPub = mSystemNode.advertise<nav_msgs::Path>("/rvio/trajectory", 1);
     mOdomPub = mSystemNode.advertise<nav_msgs::Odometry>("/rvio/odometry", 1);
@@ -104,8 +104,8 @@ System::~System()
 {
     delete mpTracker;
     delete mpUpdater;
+    delete mpImuBuffer;
     delete mpPreIntegrator;
-    delete mpSensorDatabase;
 }
 
 
@@ -146,7 +146,7 @@ void System::initialize(const Eigen::Vector3d& w, const Eigen::Vector3d& a,
         xkk.block(23,0,3,1) = a-mnGravity*g; // ba
     }
 
-    double dt = 1/mnImuRate;
+    double dt = 1./mnImuRate;
 
     Pkk.setZero(24,24);
     Pkk(0,0) = pow(1e-3,2); // qG
@@ -173,7 +173,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     static int nImageCountAfterInit = 0;
 
     std::list<ImuData*> lImuDataSeq;
-    if (mpSensorDatabase->GetImuDataByTimestamp(timestamp+mnCamTimeOffset, lImuDataSeq)==0)
+    if (mpImuBuffer->GetImuDataByTimestamp(timestamp+mnCamTimeOffset, lImuDataSeq)==0)
         return;
 
 

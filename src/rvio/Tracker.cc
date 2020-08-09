@@ -28,7 +28,6 @@
 #include <sensor_msgs/Image.h>
 
 #include "Tracker.h"
-#include "../util/Numerics.h"
 
 
 namespace RVIO

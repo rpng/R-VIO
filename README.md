@@ -1,8 +1,8 @@
 # R-VIO
 
-R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a 6-axis IMU. Different from standard world-centric VINS algorithms which directly estimate absolute motion of the sensing platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO estimates the relative motion of higher accuracy with respect to a moving, local frame (for example, IMU frame) and updates global pose (orientation and position) estimate through composition. This code is developed with the robocentric sliding-window filtering-based VIO framework that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
+R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (for example, IMU frame), and ii) incrementally updates global pose (orientation and position) through composition. This code is developed with the robocentric sliding-window filtering-based VIO framework that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, July 2019: [here](https://journals.sagepub.com/doi/10.1177/0278364919853361).
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, July 2019: [download](https://journals.sagepub.com/doi/10.1177/0278364919853361).
 
 ```
 @article{huai2019robocentric,
@@ -10,11 +10,12 @@ R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** alg
   author    = {Huai, Zheng and Huang, Guoquan},
   journal   = {The International Journal of Robotics Research},
   publisher = {SAGE Publications Sage UK: London, England},
-  url       = {\url{https://journals.sagepub.com/doi/10.1177/0278364919853361}}
+  year      = {2019},
+  url       = {https://journals.sagepub.com/doi/10.1177/0278364919853361}
 }
 ```
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [here](https://ieeexplore.ieee.org/document/8593643).
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [download](https://ieeexplore.ieee.org/document/8593643).
 
 ```
 @inproceedings{huai2018robocentric,
@@ -27,10 +28,10 @@ R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** alg
 }
 ```
 
-IROS video (on **EuRoC** and our handheld datasets): https://www.youtube.com/watch?v=UtiZ0EKa55M.
+IROS video (ETH **EuRoC MAV** dataset): [YouTube](https://www.youtube.com/watch?v=UtiZ0EKa55M).
 ![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
 
-IJRR video (on our 9.8km **urban driving** dataset): https://www.youtube.com/watch?v=l9IC2ddBEYQ.
+IJRR video (Our 9.8km **Urban Driving** dataset): [YouTube](https://www.youtube.com/watch?v=l9IC2ddBEYQ).
 ![](rvio.gif)
 
 ## 1. Prerequisites
@@ -66,4 +67,4 @@ You can also run R-VIO with your own sensor (data) by creating a config file `rv
 
 ## 3. License
 
-The source code is released under [GNU General Public License v3 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+This code is released under [GNU General Public License v3 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html).

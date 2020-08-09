@@ -66,11 +66,11 @@ add_library(${PROJECT_NAME} SHARED
   src/rvio/System.cc
   src/rvio/Updater.cc
   src/rvio/Tracker.cc
-  src/rvio/CornerDetector.cc
-  src/rvio/CornerCluster.cc
-  src/rvio/Ransac.cc
   src/rvio/PreIntegrator.cc
-  src/rvio/SensorDatabase.cc
+  src/rvio/Ransac.cc
+  src/rvio/ImuBuffer.cc
+  src/rvio/CornerCluster.cc
+  src/rvio/CornerDetector.cc
 )
 
 target_link_libraries(${PROJECT_NAME}

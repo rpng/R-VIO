@@ -25,7 +25,7 @@
 
 #include <Eigen/Core>
 
-#include "SensorDatabase.h"
+#include "ImuBuffer.h"
 
 
 namespace RVIO

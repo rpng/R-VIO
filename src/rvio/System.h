@@ -31,8 +31,8 @@
 
 #include "Tracker.h"
 #include "Updater.h"
+#include "ImuBuffer.h"
 #include "PreIntegrator.h"
-#include "SensorDatabase.h"
 
 
 namespace RVIO
@@ -50,7 +50,7 @@ public:
 
     void MonoVIO(const cv::Mat& im, const double& timestamp);
 
-    void PushImuData(ImuData* data) { mpSensorDatabase->PushImuData(data); }
+    void PushImuData(ImuData* data) {mpImuBuffer->PushImuData(data);}
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -87,8 +87,8 @@ private:
     // Handlers
     Tracker* mpTracker;
     Updater* mpUpdater;
+    ImuBuffer* mpImuBuffer;
     PreIntegrator* mpPreIntegrator;
-    SensorDatabase* mpSensorDatabase;
 
     // Interact with rviz
     ros::NodeHandle mSystemNode;

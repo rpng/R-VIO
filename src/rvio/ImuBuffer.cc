@@ -18,16 +18,16 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SensorDatabase.h"
+#include "ImuBuffer.h"
 
 
 namespace RVIO
 {
 
-SensorDatabase::SensorDatabase() {}
+ImuBuffer::ImuBuffer() {}
 
 
-void SensorDatabase::PushImuData(ImuData* pInData)
+void ImuBuffer::PushImuData(ImuData* pInData)
 {
     std::unique_lock<std::mutex> lock(mMutexImu);
 
@@ -38,7 +38,7 @@ void SensorDatabase::PushImuData(ImuData* pInData)
 }
 
 
-bool SensorDatabase::PopImuData(ImuData* pOutData)
+bool ImuBuffer::PopImuData(ImuData* pOutData)
 {
     std::unique_lock<std::mutex> lock(mMutexImu);
 
@@ -53,8 +53,8 @@ bool SensorDatabase::PopImuData(ImuData* pOutData)
 }
 
 
-int SensorDatabase::GetImuDataByTimestamp(const double nTimestamp,
-                                          std::list<ImuData*>& lOutData)
+int ImuBuffer::GetImuDataByTimestamp(const double nTimestamp,
+                                     std::list<ImuData*>& lOutData)
 {
     std::unique_lock<std::mutex> lock(mMutexImu);
 

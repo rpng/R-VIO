@@ -18,8 +18,8 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SENSORDATABASE_H
-#define SENSORDATABASE_H
+#ifndef IMUBUFFER_H
+#define IMUBUFFER_H
 
 #include <list>
 #include <mutex>
@@ -47,11 +47,11 @@ struct ImuData
 };
 
 
-class SensorDatabase
+class ImuBuffer
 {
 public:
 
-    SensorDatabase();
+    ImuBuffer();
 
     void PushImuData(ImuData* pInData);
     bool PopImuData(ImuData* pOutData);

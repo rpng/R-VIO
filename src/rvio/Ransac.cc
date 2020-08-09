@@ -47,8 +47,8 @@ Ransac::Ransac(const cv::FileStorage& fsSettings)
 }
 
 
-void Ransac::SetPointSet(const int nInlierCandidates,
-                         const int nIterations)
+void Ransac::SetPointPair(const int nInlierCandidates,
+                          const int nIterations)
 {
     std::vector<int> vIndices(nInlierCandidates);
     for (int i=0; i<nInlierCandidates; ++i)
@@ -182,7 +182,6 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
                         std::list<ImuData*>& lImuData,
                         std::vector<unsigned char>& vInlierFlag)
 {
-    // Reset the model
     mRansacModel.hypotheses.setZero();
     mRansacModel.nInliers.setZero();
     mRansacModel.twoPoints.setZero();
@@ -194,14 +193,13 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
     {
         if (vInlierFlag.at(i))
         {
-            // Store the index of inlier candidate
             mvInlierCandidateIndices.push_back(i);
             nInlierCandidates++;
         }
     }
 
     if (nInlierCandidates>mRansacModel.nIterations)
-        SetPointSet(nInlierCandidates, mRansacModel.nIterations);
+        SetPointPair(nInlierCandidates, mRansacModel.nIterations);
     else
         // Too few inliers
         return 0;
@@ -213,7 +211,6 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
     int nWinnerHypothesisIdx = 0;
     for (int i=0; i<mRansacModel.nIterations; ++i)
     {
-        // Do Ransac
         SetRansacModel(Points1, Points2, R, i);
         CountInliers(Points1, Points2, i);
 
@@ -227,7 +224,6 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
 
     Eigen::Matrix3d WinnerE = mRansacModel.hypotheses.block<3,3>(3*nWinnerHypothesisIdx,0);
 
-    // Find new outliers
     int nNewOutliers = 0;
     for (int i=0; i<nInlierCandidates; ++i)
     {
@@ -253,7 +249,7 @@ int Ransac::FindInliers(const Eigen::MatrixXd& Points1,
 
 double Ransac::SampsonError(const Eigen::Vector3d& pt1,
                             const Eigen::Vector3d& pt2,
-                            const Eigen::Matrix3d& E)
+                            const Eigen::Matrix3d& E) const
 {
     Eigen::Vector3d Fx1 = E*pt1;
     Eigen::Vector3d Fx2 = E.transpose()*pt2;
@@ -264,7 +260,7 @@ double Ransac::SampsonError(const Eigen::Vector3d& pt1,
 
 double Ransac::AlgebraicError(const Eigen::Vector3d& pt1,
                               const Eigen::Vector3d& pt2,
-                              const Eigen::Matrix3d& E)
+                              const Eigen::Matrix3d& E) const
 {
     return fabs(pt2.transpose()*E*pt1);
 }

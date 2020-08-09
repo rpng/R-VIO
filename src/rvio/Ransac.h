@@ -25,7 +25,7 @@
 
 #include <Eigen/Core>
 
-#include "SensorDatabase.h"
+#include "ImuBuffer.h"
 
 
 namespace RVIO
@@ -69,7 +69,7 @@ public:
      * @the number of inliers is @p nInlierCandidates.
      * @the number of iterations needed is @p nIterations.
      */
-    void SetPointSet(const int nInlierCandidates, const int nIterations);
+    void SetPointPair(const int nInlierCandidates, const int nIterations);
 
     /**
      * @use two (normalized) correspondences point(i)(j), where seq i=(A,B) and
@@ -106,10 +106,10 @@ public:
      * Metric for evaluation
      */
     double SampsonError(const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2,
-                        const Eigen::Matrix3d& E);
+                        const Eigen::Matrix3d& E) const;
 
     double AlgebraicError(const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2,
-                          const Eigen::Matrix3d& E);
+                          const Eigen::Matrix3d& E) const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
