@@ -1,12 +1,12 @@
 # R-VIO
 
-R-VIO is an efficient, lightweight, **robocentric visual-inertial odometry** algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (for example, IMU frame), and ii) incrementally updates global pose (orientation and position) through composition. This code is developed with the robocentric sliding-window filtering-based VIO framework that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
+R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (the IMU frame here), and ii) incrementally updates global pose (orientation and position) through a composition step. This code is developed with the robocentric sliding-window filtering-based VIO framework that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, July 2019: [download](https://journals.sagepub.com/doi/10.1177/0278364919853361).
 
 ```
 @article{huai2019robocentric,
-  title     = {Robocentric visual--inertial odometry},
+  title     = {Robocentric visual-inertial odometry},
   author    = {Huai, Zheng and Huang, Guoquan},
   journal   = {The International Journal of Robotics Research},
   publisher = {SAGE Publications Sage UK: London, England},
@@ -36,7 +36,7 @@ IJRR video (Our 9.8km **Urban Driving** dataset): [YouTube](https://www.youtube.
 
 ## 1. Prerequisites
 
-We have tested the code under Ubuntu **16.04** and ROS **Kinetic**.
+We have tested this code under Ubuntu **16.04** and ROS **Kinetic**.
 
 ### ROS
 Download and install instructions can be found at: http://wiki.ros.org/kinetic/Installation/Ubuntu.
@@ -63,7 +63,10 @@ First, `git clone` the repository and `catkin_make` it. Then, to run `rvio` with
   ```
   Terminal 4: rosbag play --pause V1_01_easy.bag /cam0/image_raw:=/camera/image_raw /imu0:=/imu
   ```
-You can also run R-VIO with your own sensor (data) by creating a config file `rvio_NAME_OF_YOUR_DATA.yaml` in *config* folder and the corresponding launch file `NAME_OF_YOUR_DATA.launch` in *launch* folder referring to the above EuRoC example.
+
+Note that when testing the `Machine Hall` sequences, you should skip the data in the first few seconds (e.g., 40s for `MH_01_easy`) which are used for initializing the map for SLAM-based algorithms.
+
+You can also run R-VIO with your own sensors (data) by creating a config file `rvio_NAME_OF_YOUR_DATA.yaml` in *config* folder and the corresponding launch file `NAME_OF_YOUR_DATA.launch` in *launch* folder, referring to our EuRoC example.
 
 ## 3. License
 

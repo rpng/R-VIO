@@ -7,9 +7,6 @@
 # IMU data rate
 IMU.dps: 200
 
-# Threshold of small angle [rad] (<.1deg)
-IMU.nSmallAngle: 0.001745329
-
 # IMU sensor noise
 IMU.sigma_g: 1.6968e-04
 IMU.sigma_wg: 1.9393e-05
@@ -18,6 +15,9 @@ IMU.sigma_wa: 3.0000e-3
 
 # Gravity
 IMU.nG: 9.8082
+
+# Threshold of small angle [rad] (<.1deg)
+IMU.nSmallAngle: 0.001745329
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters (fixed).
@@ -72,19 +72,20 @@ Camera.nTimeOffset: 0
 Tracker.nFeatures: 200
 
 # Max. tracking length
-Tracker.nMaxTrackingLength: 15 # 10 # 5
+Tracker.nMaxTrackingLength: 15
 
 # Min. tracking length
 Tracker.nMinTrackingLength: 3
 
 # Min. distance between features
-Tracker.nMinDist: 10
+Tracker.nMinDist: 15
 
 # Quality level of features
 Tracker.nQualLvl: 0.01
 
-# Size of chess grid
-Tracker.nGridSize: 100
+# Block size of image chess grid
+Tracker.nBlockSizeX: 150
+Tracker.nBlockSizeY: 120
 
 # Use histogram equalizer or not
 Tracker.EnableEqualizer: 1
@@ -93,14 +94,14 @@ Tracker.EnableEqualizer: 1
 Tracker.UseSampson: 1
 
 # Error threshold for inlier (RANSAC)
-Tracker.nInlierThrd: 1e-4
+Tracker.nInlierThrd: 1e-5
 
 #--------------------------------------------------------------------------------------------
 # Initialization Parameters (tunable).
 #--------------------------------------------------------------------------------------------
 
 # Thresholds for moving detection [rad,m]
-INI.nThresholdAngle: 0.005
+INI.nThresholdAngle: 0.005 # 0.01 (for MH_*)
 INI.nThresholdDispl: 0.01
 
 # Use gravity alignment or not

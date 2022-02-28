@@ -25,7 +25,7 @@
 
 #include <Eigen/Core>
 
-#include "ImuBuffer.h"
+#include "InputBuffer.h"
 
 
 namespace RVIO

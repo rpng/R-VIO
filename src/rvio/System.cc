@@ -38,6 +38,8 @@ namespace RVIO
 nav_msgs::Path path;
 
 std::ofstream fPoseResults;
+std::ofstream fTimeResults;
+
 
 System::System(const std::string& strSettingsFile)
 {
@@ -81,7 +83,8 @@ System::System(const std::string& strSettingsFile)
     if (mbRecordOutputs)
     {
         std::string pkg_path = ros::package::getPath("rvio");
-        fPoseResults.open(pkg_path+"/stamped_pose_ests.dat", std::ofstream::out | std::ofstream::app);
+        fPoseResults.open(pkg_path+"/stamped_pose_ests.dat", std::ofstream::out);
+        fTimeResults.open(pkg_path+"/time_cost.dat", std::ofstream::out);
     }
 
     mnThresholdAngle = fsSettings["INI.nThresholdAngle"];
@@ -90,7 +93,7 @@ System::System(const std::string& strSettingsFile)
     mbIsMoving = false;
     mbIsReady = false;
 
-    mpImuBuffer = new ImuBuffer();
+    mpInputBuffer = new InputBuffer();
     mpTracker = new Tracker(fsSettings);
     mpUpdater = new Updater(fsSettings);
     mpPreIntegrator = new PreIntegrator(fsSettings);
@@ -104,7 +107,7 @@ System::~System()
 {
     delete mpTracker;
     delete mpUpdater;
-    delete mpImuBuffer;
+    delete mpInputBuffer;
     delete mpPreIntegrator;
 }
 
@@ -167,19 +170,16 @@ void System::initialize(const Eigen::Vector3d& w, const Eigen::Vector3d& a,
 }
 
 
-void System::MonoVIO(const cv::Mat& im, const double& timestamp)
+void System::MonoVIO()
 {
     static int nCloneStates = 0;
     static int nImageCountAfterInit = 0;
 
-    std::list<ImuData*> lImuDataSeq;
-    if (mpImuBuffer->GetImuDataByTimestamp(timestamp+mnCamTimeOffset, lImuDataSeq)==0)
+    std::pair<ImageData*, std::list<ImuData*> > pMeasurements;
+    if (!mpInputBuffer->GetMeasurements(mnCamTimeOffset, pMeasurements))
         return;
 
-
-    /**
-     * Initialization
-     */
+    /* Initialization */
     if (!mbIsReady)
     {
         static Eigen::Vector3d wm = Eigen::Vector3d::Zero();
@@ -195,8 +195,8 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
             vel.setZero();
             displ.setZero();
 
-            for (std::list<ImuData*>::const_iterator lit=lImuDataSeq.begin();
-                 lit!=lImuDataSeq.end(); ++lit)
+            for (std::list<ImuData*>::const_iterator lit=pMeasurements.second.begin();
+                 lit!=pMeasurements.second.end(); ++lit)
             {
                 Eigen::Vector3d w = (*lit)->AngularVel;
                 Eigen::Vector3d a = (*lit)->LinearAccel;
@@ -214,21 +214,21 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
                 mbIsMoving = true;
         }
 
-        while (!lImuDataSeq.empty())
+        while (!pMeasurements.second.empty())
         {
             if (!mbIsMoving)
             {
-                wm += (lImuDataSeq.front())->AngularVel;
-                am += (lImuDataSeq.front())->LinearAccel;
-                lImuDataSeq.pop_front();
+                wm += (pMeasurements.second.front())->AngularVel;
+                am += (pMeasurements.second.front())->LinearAccel;
+                pMeasurements.second.pop_front();
                 nImuDataCount++;
             }
             else
             {
                 if (nImuDataCount==0)
                 {
-                    wm = (lImuDataSeq.front())->AngularVel;
-                    am = (lImuDataSeq.front())->LinearAccel;
+                    wm = (pMeasurements.second.front())->AngularVel;
+                    am = (pMeasurements.second.front())->LinearAccel;
                     nImuDataCount = 1;
                 }
                 else
@@ -250,20 +250,19 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
 
     nImageCountAfterInit++;
 
+    ros::WallTime t1, t2, t3;
 
-    /**
-     * Visual tracking & Propagation
-     */
-    boost::thread thdTracking(&Tracker::track, mpTracker, std::ref(im), std::ref(lImuDataSeq));
-    boost::thread thdPropagate(&PreIntegrator::propagate, mpPreIntegrator, std::ref(xkk), std::ref(Pkk), std::ref(lImuDataSeq));
+    t1 = ros::WallTime::now();
 
-    thdTracking.join();
-    thdPropagate.join();
+    /* Visual tracking */
+    mpTracker->track(pMeasurements.first->Image, pMeasurements.second);
 
+    t2 = ros::WallTime::now();
 
-    /**
-     * Update
-     */
+    /* Propagation */
+    mpPreIntegrator->propagate(xkk, Pkk, pMeasurements.second);
+
+    /* Update */
     if (nCloneStates>mnMinCloneStates)
     {
         mpUpdater->update(mpPreIntegrator->xk1k, mpPreIntegrator->Pk1k, mpTracker->mvFeatTypesForUpdate, mpTracker->mvlFeatMeasForUpdate);
@@ -277,10 +276,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
         Pkk = mpPreIntegrator->Pk1k;
     }
 
-
-    /**
-     * State augmentation
-     */
+    /* State augmentation */
     if (nImageCountAfterInit>1)
     {
         if (nCloneStates<mnSlidingWindowSize)
@@ -326,10 +322,7 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
         }
     }
 
-
-    /**
-     * Composition
-     */
+    /* Composition */
     Eigen::Vector4d qG = xkk.block(0,0,4,1);
     Eigen::Vector3d pG = xkk.block(4,0,3,1);
     Eigen::Vector3d gk = xkk.block(7,0,3,1);
@@ -346,14 +339,6 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     Eigen::Vector4d qkG = QuatMul(qk,qG);
     Eigen::Vector3d pkG = Rk*(pG-pk);
     Eigen::Vector3d pGk = RG.transpose()*(pk-pG);
-
-    if (mbRecordOutputs)
-    {
-        fPoseResults << std::setprecision(19) << timestamp << " "
-                     << pGk(0) << " " << pGk(1) << " " << pGk(2) << " "
-                     << qkG(0) << " " << qkG(1) << " " << qkG(2) << " " << qkG(3) << "\n";
-        fPoseResults.flush();
-    }
 
     // Pk
     Eigen::Matrix<double,24,24> Vk;
@@ -379,14 +364,27 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     xkk.block(10,0,4,1) = Eigen::Vector4d(0,0,0,1);
     xkk.block(14,0,3,1) = Eigen::Vector3d(0,0,0);
 
+    t3 = ros::WallTime::now();
+
+    if (mbRecordOutputs)
+    {
+        fPoseResults << std::setprecision(19) << pMeasurements.first->Timestamp << " "
+                     << pGk(0) << " " << pGk(1) << " " << pGk(2) << " "
+                     << qkG(0) << " " << qkG(1) << " " << qkG(2) << " " << qkG(3) << "\n";
+        fPoseResults.flush();
+
+        fTimeResults << nImageCountAfterInit << std::setprecision(19) << " "
+                     << 1e3*(t2.toSec()-t1.toSec()) << " "
+                     << 1e3*(t3.toSec()-t2.toSec()) << "\n";
+        fTimeResults.flush();
+    }
+
     ROS_INFO("qkG: %5f, %5f, %5f, %5f", qkG(0), qkG(1), qkG(2), qkG(3));
     ROS_INFO("pGk: %5f, %5f, %5f\n", pGk(0), pGk(1), pGk(2));
 
 
-    /**
-     * Interact with ROS rviz
-     */
-    // Broadcast tf
+    /* Interact with ROS rviz */
+    // Broadcast tf message
     geometry_msgs::TransformStamped transformStamped;
     transformStamped.header.stamp = ros::Time::now();
     transformStamped.header.frame_id = "world";
@@ -401,11 +399,10 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
 
     mTfPub.sendTransform(transformStamped);
 
-    // Broadcast the odometry
+    // Broadcast odometry message
     nav_msgs::Odometry odom;
     odom.header.stamp = ros::Time::now();
     odom.header.frame_id = "world";
-    //set the position
     odom.pose.pose.position.x = pGk(0);
     odom.pose.pose.position.y = pGk(1);
     odom.pose.pose.position.z = pGk(2);
@@ -413,7 +410,6 @@ void System::MonoVIO(const cv::Mat& im, const double& timestamp)
     odom.pose.pose.orientation.y = qkG(1);
     odom.pose.pose.orientation.z = qkG(2);
     odom.pose.pose.orientation.w = qkG(3);
-    //set the velocity
     odom.child_frame_id = "imu";
     odom.twist.twist.linear.x = vk(0);
     odom.twist.twist.linear.y = vk(1);

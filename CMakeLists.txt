@@ -23,11 +23,8 @@ else()
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-# Enable compile optimizations
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fsee -fomit-frame-pointer -fno-signed-zeros -fno-math-errno -funroll-loops")
-
 # Enable debug flags (if you want to debug in gdb)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g3")
 
 # Find catkin (the ROS build system)
 # Add this for finding ros dependencies
@@ -68,9 +65,8 @@ add_library(${PROJECT_NAME} SHARED
   src/rvio/Tracker.cc
   src/rvio/PreIntegrator.cc
   src/rvio/Ransac.cc
-  src/rvio/ImuBuffer.cc
-  src/rvio/CornerCluster.cc
-  src/rvio/CornerDetector.cc
+  src/rvio/InputBuffer.cc
+  src/rvio/FeatureDetector.cc
 )
 
 target_link_libraries(${PROJECT_NAME}

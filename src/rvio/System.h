@@ -31,7 +31,7 @@
 
 #include "Tracker.h"
 #include "Updater.h"
-#include "ImuBuffer.h"
+#include "InputBuffer.h"
 #include "PreIntegrator.h"
 
 
@@ -46,11 +46,12 @@ public:
 
     ~System();
 
+    void PushImuData(ImuData* data) {mpInputBuffer->PushImuData(data);}
+    void PushImageData(ImageData* pData) {mpInputBuffer->PushImageData(pData);}
+
     void initialize(const Eigen::Vector3d& w, const Eigen::Vector3d& a, const int nImuData, const bool bEnableAlignment);
 
-    void MonoVIO(const cv::Mat& im, const double& timestamp);
-
-    void PushImuData(ImuData* data) {mpImuBuffer->PushImuData(data);}
+    void MonoVIO();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -87,7 +88,7 @@ private:
     // Handlers
     Tracker* mpTracker;
     Updater* mpUpdater;
-    ImuBuffer* mpImuBuffer;
+    InputBuffer* mpInputBuffer;
     PreIntegrator* mpPreIntegrator;
 
     // Interact with rviz

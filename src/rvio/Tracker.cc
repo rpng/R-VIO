@@ -18,9 +18,6 @@
 * along with R-VIO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm> // std::copy
-#include <iterator> // std::back_inserter
-
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
@@ -85,8 +82,7 @@ Tracker::Tracker(const cv::FileStorage& fsSettings)
 
     mLastImage = cv::Mat();
 
-    mpCornerDetector = new CornerDetector(fsSettings);
-    mpCornerCluster = new CornerCluster(fsSettings);
+    mpFeatureDetector = new FeatureDetector(fsSettings);
     mpRansac = new Ransac(fsSettings);
 
     mTrackPub = mTrackerNode.advertise<sensor_msgs::Image>("/rvio/track", 1);
@@ -96,8 +92,7 @@ Tracker::Tracker(const cv::FileStorage& fsSettings)
 
 Tracker::~Tracker()
 {
-    delete mpCornerDetector;
-    delete mpCornerCluster;
+    delete mpFeatureDetector;
     delete mpRansac;
 }
 
@@ -182,7 +177,7 @@ void Tracker::DisplayNewer(const cv::Mat& imIn,
 
 
 void Tracker::track(const cv::Mat& im,
-                    std::list<ImuData*>& plImuData)
+                    std::list<ImuData*>& lImuData)
 {
     // Convert to gray scale
     if (im.channels()==3)
@@ -209,7 +204,7 @@ void Tracker::track(const cv::Mat& im,
     if (mbIsTheFirstImage)
     {
         // Detect features
-        mnFeatsToTrack = mpCornerDetector->DetectWithSubPix(mnMaxFeatsPerImage, im, mvFeatsToTrack);
+        mnFeatsToTrack = mpFeatureDetector->DetectWithSubPix(im, mnMaxFeatsPerImage, 1, mvFeatsToTrack);
 
         if (mnFeatsToTrack==0)
         {
@@ -266,7 +261,7 @@ void Tracker::track(const cv::Mat& im,
         }
 
         // RANSAC
-        mpRansac->FindInliers(mPoints1ForRansac, mPoints2ForRansac, plImuData, vInlierFlag);
+        mpRansac->FindInliers(mPoints1ForRansac, mPoints2ForRansac, lImuData, vInlierFlag);
 
         // Show the result in rviz
         cv_bridge::CvImage imTrack;
@@ -352,9 +347,8 @@ void Tracker::track(const cv::Mat& im,
             std::vector<cv::Point2f> vTempFeats;
             std::deque<cv::Point2f> qNewFeats;
 
-            mpCornerCluster->ChessGrid(mvFeatsToTrack);
-            mpCornerDetector->DetectWithSubPix(mnMaxFeatsPerImage, im, vTempFeats);
-            int nNewFeats = mpCornerCluster->FindNew(vTempFeats, qNewFeats, 10);
+            mpFeatureDetector->DetectWithSubPix(im, mnMaxFeatsPerImage, 2, vTempFeats);
+            int nNewFeats = mpFeatureDetector->FindNewer(vTempFeats, mvFeatsToTrack, qNewFeats);
 
             // Show the result in rviz
             cv_bridge::CvImage imNewer;

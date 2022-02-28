@@ -69,7 +69,13 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         return;
     }
 
-    mpSys->MonoVIO(cv_ptr->image, cv_ptr->header.stamp.toSec());
+    RVIO::ImageData* pData = new RVIO::ImageData();
+    pData->Image = cv_ptr->image.clone();
+    pData->Timestamp = cv_ptr->header.stamp.toSec();
+
+    mpSys->PushImageData(pData);
+
+    mpSys->MonoVIO();
 }
 
 
@@ -115,7 +121,7 @@ int main(int argc, char **argv)
     ImuGrabber igb2(&Sys);
 
     ros::NodeHandle nodeHandler;
-    ros::Subscriber image_sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage, &igb1);
+    ros::Subscriber image_sub = nodeHandler.subscribe("/camera/image_raw", 10, &ImageGrabber::GrabImage, &igb1);
     ros::Subscriber imu_sub = nodeHandler.subscribe("/imu", 100, &ImuGrabber::GrabImu, &igb2);
 
     ros::spin();

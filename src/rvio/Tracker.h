@@ -32,8 +32,7 @@
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 
-#include "CornerDetector.h"
-#include "CornerCluster.h"
+#include "FeatureDetector.h"
 #include "Ransac.h"
 
 
@@ -48,7 +47,7 @@ public:
 
     ~Tracker();
 
-    void track(const cv::Mat& im, std::list<ImuData*>& plImuData);
+    void track(const cv::Mat& im, std::list<ImuData*>& lImuData);
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -92,6 +91,9 @@ private:
     cv::Mat mK;
     cv::Mat mDistCoef;
 
+    // Last image
+    cv::Mat mLastImage;
+
     /**
      * Feature tracking history
      *
@@ -115,12 +117,8 @@ private:
     Eigen::MatrixXd mPoints1ForRansac;
     Eigen::MatrixXd mPoints2ForRansac;
 
-    // Last image
-    cv::Mat mLastImage;
-
     // Handlers
-    CornerDetector* mpCornerDetector;
-    CornerCluster* mpCornerCluster;
+    FeatureDetector* mpFeatureDetector;
     Ransac* mpRansac;
 
     // Interact with rviz

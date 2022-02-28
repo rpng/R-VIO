@@ -21,11 +21,12 @@
 #ifndef RANSAC_H
 #define RANSAC_H
 
+#include <list>
 #include <vector>
 
 #include <Eigen/Core>
 
-#include "ImuBuffer.h"
+#include "InputBuffer.h"
 
 
 namespace RVIO
