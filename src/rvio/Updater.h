@@ -56,8 +56,7 @@ private:
     double mnCamRate;
 
     // Sigma{pixel}
-    double msigmaImageNoiseX;
-    double msigmaImageNoiseY;
+    double mnImageNoiseSigma;
 
     // Extrinsics
     Eigen::Matrix3d mRic;

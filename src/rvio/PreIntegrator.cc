@@ -29,23 +29,22 @@ namespace RVIO
 
 PreIntegrator::PreIntegrator(const cv::FileStorage& fsSettings)
 {
-    msigmaGyroNoise = fsSettings["IMU.sigma_g"];
-    msigmaGyroBias = fsSettings["IMU.sigma_wg"];
-    msigmaAccelNoise = fsSettings["IMU.sigma_a"];
-    msigmaAccelBias = fsSettings["IMU.sigma_wa"];
-
+    mnGravity = fsSettings["IMU.nG"];
     mnSmallAngle = fsSettings["IMU.nSmallAngle"];
 
-    mnGravity = fsSettings["IMU.nG"];
+    mnGyroNoiseSigma = fsSettings["IMU.sigma_g"];
+    mnGyroRandomWalkSigma = fsSettings["IMU.sigma_wg"];
+    mnAccelNoiseSigma = fsSettings["IMU.sigma_a"];
+    mnAccelRandomWalkSigma = fsSettings["IMU.sigma_wa"];
+
+    ImuNoiseMatrix.setIdentity();
+    ImuNoiseMatrix.block<3,3>(0,0) *= pow(mnGyroNoiseSigma,2);
+    ImuNoiseMatrix.block<3,3>(3,3) *= pow(mnGyroRandomWalkSigma,2);
+    ImuNoiseMatrix.block<3,3>(6,6) *= pow(mnAccelNoiseSigma,2);
+    ImuNoiseMatrix.block<3,3>(9,9) *= pow(mnAccelRandomWalkSigma,2);
 
     xk1k.setZero(26,1);
     Pk1k.setZero(24,24);
-
-    Sigma.setIdentity();
-    Sigma.block<3,3>(0,0) *= pow(msigmaGyroNoise,2);
-    Sigma.block<3,3>(3,3) *= pow(msigmaGyroBias,2);
-    Sigma.block<3,3>(6,6) *= pow(msigmaAccelNoise,2);
-    Sigma.block<3,3>(9,9) *= pow(msigmaAccelBias,2);
 }
 
 
@@ -138,7 +137,7 @@ void PreIntegrator::propagate(Eigen::VectorXd& xkk,
         G.block<3,3>(15,6) = -I;
         G.block<3,3>(18,3) = I;
         G.block<3,3>(21,9) = I;
-        Q = dt*G*Sigma*(G.transpose());
+        Q = dt*G*ImuNoiseMatrix*(G.transpose());
 
         Pkk.block(0,0,24,24) = Phi*(Pkk.block(0,0,24,24))*(Phi.transpose())+Q;
 

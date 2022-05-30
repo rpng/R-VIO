@@ -52,14 +52,13 @@ private:
     double mnGravity;
     double mnSmallAngle;
 
-    // Sigma{g,a,wg,wa}
-    double msigmaGyroNoise;
-    double msigmaAccelNoise;
-    double msigmaGyroBias;
-    double msigmaAccelBias;
+    // Sigma{g,wg,a,wa}
+    double mnGyroNoiseSigma;
+    double mnGyroRandomWalkSigma;
+    double mnAccelNoiseSigma;
+    double mnAccelRandomWalkSigma;
 
-    // Noise covariance matrix
-    Eigen::Matrix<double,12,12> Sigma;
+    Eigen::Matrix<double,12,12> ImuNoiseMatrix;
 };
 
 } // namespace RVIO

@@ -39,8 +39,9 @@ Updater::Updater(const cv::FileStorage& fsSettings)
 {
     mnCamRate = fsSettings["Camera.fps"];
 
-    msigmaImageNoiseX = fsSettings["Camera.sigma_px"];
-    msigmaImageNoiseY = fsSettings["Camera.sigma_py"];
+    const float nImageNoiseSigmaX = fsSettings["Camera.sigma_px"];
+    const float nImageNoiseSigmaY = fsSettings["Camera.sigma_py"];
+    mnImageNoiseSigma = std::max(nImageNoiseSigmaX, nImageNoiseSigmaY);
 
     cv::Mat T(4,4,CV_32F);
     fsSettings["Camera.T_BC0"] >> T;
@@ -170,8 +171,8 @@ void Updater::update(Eigen::VectorXd& xk1k,
                 -sin(phi)*cos(psi), -cos(phi)*sin(psi);
 
         Eigen::Matrix2d Rinv;
-        Rinv << 1/pow(msigmaImageNoiseX,2), 0,
-                0, 1/pow(msigmaImageNoiseY,2);
+        Rinv << 1./pow(mnImageNoiseSigma,2), 0,
+                0, 1./pow(mnImageNoiseSigma,2);
 
         int maxIter = 10;
         double lambda = 0.01;
@@ -201,7 +202,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
             e1 << (ptFirst-pt1).x, (ptFirst-pt1).y;
 
             cost += e1.transpose()*Rinv*e1;
-
             HTRinvH.noalias() += H1.transpose()*Rinv*H1;
             HTRinve.noalias() += H1.transpose()*Rinv*e1;
 
@@ -228,7 +228,6 @@ void Updater::update(Eigen::VectorXd& xk1k,
                 e << ((*lit)-pt).x, ((*lit)-pt).y;
 
                 cost += e.transpose()*Rinv*e;
-
                 HTRinvH.noalias() += H.transpose()*Rinv*H;
                 HTRinve.noalias() += H.transpose()*Rinv*e;
             }
@@ -249,7 +248,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
                          cos(phi), 0,
                         -sin(phi)*cos(psi), -cos(phi)*sin(psi);
 
-                if (fabs(lastCost-cost)<1e-6 || dpfinv.norm()<1e-6)
+                if (fabs(lastCost-cost)<1e-6 && dpfinv(2)<1e-6)
                     break;
 
                 lambda *= .1;
@@ -411,7 +410,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
 
         Eigen::VectorXd tempR;
         tempR.setOnes(nDOF,1);
-        tempR *= pow(msigmaImageNoiseX>msigmaImageNoiseY ? msigmaImageNoiseX:msigmaImageNoiseY,2);
+        tempR *= pow(mnImageNoiseSigma, 2);
 
         Eigen::MatrixXd tempS;
         tempS = tempHx_*Pk1k.block(24,24,6*nCloneStates,6*nCloneStates)*(tempHx_.transpose());
@@ -465,7 +464,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
 
         Eigen::VectorXd Ro;
         Ro.setOnes(nRowCount,1);
-        Ro *= pow(msigmaImageNoiseX>msigmaImageNoiseY ? msigmaImageNoiseX:msigmaImageNoiseY,2);
+        Ro *= pow(mnImageNoiseSigma, 2);
 
         // Model compression
         Eigen::VectorXd rn;
@@ -526,7 +525,7 @@ void Updater::update(Eigen::VectorXd& xk1k,
             rn = ro.block(0,0,nRank,1);
             Hn = Ho.block(0,0,nRank,Ho.cols());
             Rn.setOnes(nRank,1);
-            Rn *= pow(msigmaImageNoiseX>msigmaImageNoiseY ? msigmaImageNoiseX:msigmaImageNoiseY,2);
+            Rn *= pow(mnImageNoiseSigma, 2);
         }
         else
         {
