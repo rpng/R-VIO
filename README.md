@@ -1,17 +1,19 @@
 # R-VIO
 
-R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (the IMU frame here), and ii) incrementally updates global pose (orientation and position) through a composition step. This code is developed with the robocentric sliding-window filtering-based VIO framework that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
+R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (the IMU frame here), and ii) incrementally updates global pose (orientation and position) through a composition step. This code implements our robocentric sliding-window filtering-based VIO formulation that was originally proposed in our *IROS2018* paper and further extended in our recent *IJRR* paper:
 
-- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, July 2019: [download](https://journals.sagepub.com/doi/10.1177/0278364919853361).
+- Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, 2022: [download](https://journals.sagepub.com/doi/10.1177/0278364919853361).
 
 ```
-@article{huai2019robocentric,
-  title     = {Robocentric visual-inertial odometry},
-  author    = {Huai, Zheng and Huang, Guoquan},
-  journal   = {The International Journal of Robotics Research},
-  publisher = {SAGE Publications Sage UK: London, England},
-  year      = {2019},
-  url       = {https://journals.sagepub.com/doi/10.1177/0278364919853361}
+@article{huai2022robocentric,
+  title={Robocentric visual-inertial odometry},
+  author={Huai, Zheng and Huang, Guoquan},
+  journal={The International Journal of Robotics Research},
+  volume={41},
+  number={7},
+  pages={667--689},
+  year={2022},
+  publisher={SAGE Publications Sage UK: London, England}
 }
 ```
 
@@ -28,11 +30,13 @@ R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation a
 }
 ```
 
-IROS video (ETH **EuRoC MAV** dataset): [YouTube](https://www.youtube.com/watch?v=UtiZ0EKa55M).
-![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
+This work has been further extended in our recent *IEEE RA-L* paper, and the proposed square-root estimator [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
 
-IJRR video (Our 9.8km **Urban Driving** dataset): [YouTube](https://www.youtube.com/watch?v=l9IC2ddBEYQ).
+![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
+IROS video (ETH **EuRoC MAV** dataset): [YouTube](https://www.youtube.com/watch?v=UtiZ0EKa55M).
+
 ![](rvio.gif)
+IJRR video (9.8km **Urban Driving** test): [YouTube](https://www.youtube.com/watch?v=l9IC2ddBEYQ).
 
 ## 1. Prerequisites
 
