@@ -33,9 +33,11 @@ R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation a
 This work has been further extended in our recent *IEEE RA-L* paper, and the proposed square-root estimator [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
 
 ![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
-IROS video (ETH **EuRoC MAV** dataset): [YouTube](https://www.youtube.com/watch?v=UtiZ0EKa55M).
+
+IROS video (**EuRoC MAV** dataset): [YouTube](https://www.youtube.com/watch?v=UtiZ0EKa55M).
 
 ![](rvio.gif)
+
 IJRR video (9.8km **Urban Driving** test): [YouTube](https://www.youtube.com/watch?v=l9IC2ddBEYQ).
 
 ## 1. Prerequisites
