@@ -30,7 +30,19 @@ R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation a
 }
 ```
 
-This work has been further extended in our recent *IEEE RA-L* paper, and the proposed square-root estimator [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
+This work has been further extended in our *IEEE RA-L* paper, and the proposed [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
+```
+@article{huai2022square,
+  title={Square-root robocentric visual-inertial odometry with online spatiotemporal calibration},
+  author={Huai, Zheng and Huang, Guoquan},
+  journal={IEEE Robotics and Automation Letters},
+  volume={7},
+  number={4},
+  pages={9961--9968},
+  year={2022},
+  publisher={IEEE}
+}
+```
 
 ![](https://media.giphy.com/media/RMecOYlfxEcy4T8JdS/giphy.gif)
 
