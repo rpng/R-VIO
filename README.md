@@ -3,7 +3,6 @@
 R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation algorithm for consistent 3D motion tracking using only a monocular camera and a single IMU. Different from the standard world-centric algorithms which directly estimate absolute motion of the mobile platform with respect to a fixed, gravity-aligned, global frame of reference, R-VIO i) estimates relative motion of higher accuracy with respect to a moving, local frame (the IMU frame here), and ii) incrementally updates global pose (orientation and position) through a composition step. This code implements our robocentric sliding-window filtering-based VIO formulation that was originally proposed in our *IROS2018* paper and presented in detail in our recent *IJRR* paper:
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *The International Journal of Robotics Research (IJRR)*, 2022: [download](https://journals.sagepub.com/doi/10.1177/0278364919853361).
-
 ```
 @article{huai2022robocentric,
   title={Robocentric visual-inertial odometry},
@@ -18,7 +17,6 @@ R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation a
 ```
 
 - Zheng Huai and Guoquan Huang, **Robocentric visual-inertial odometry**, *IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, Madrid, Spain, Oct 1-5, 2018: [download](https://ieeexplore.ieee.org/document/8593643).
-
 ```
 @inproceedings{huai2018robocentric,
   title     = {Robocentric visual-inertial odometry},
@@ -30,7 +28,8 @@ R-VIO is an efficient, lightweight, **robocentric** visual-inertial navigation a
 }
 ```
 
-This work has been further extended in our *IEEE RA-L* paper, and the proposed [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
+This work has been further extended in our *IEEE RA-L* paper below, and the proposed [R-VIO2](https://github.com/rpng/R-VIO2) is also open sourced.
+- Zheng Huai and Guoquan Huang, **Square-Root Robocentric Visual-Inertial Odometry with Online Spatiotemporal Calibration**, *IEEE Robotics and Automation Letters (RA-L)*, 2022: [download](https://ieeexplore.ieee.org/document/9830847).
 ```
 @article{huai2022square,
   title={Square-root robocentric visual-inertial odometry with online spatiotemporal calibration},
